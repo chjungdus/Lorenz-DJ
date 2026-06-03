@@ -10,7 +10,7 @@
 //
 // ============================================================
 
-const SUPABASE_URL      = 'DEINE_SUPABASE_URL';   // z.B. https://abcdef.supabase.co
+const SUPABASE_URL      = 'https://wjfjdhzvkrazuspykkuk.supabase.co';
 const SUPABASE_ANON_KEY = 'DEIN_ANON_KEY';         // der "anon public" Key
 
 const ADMIN_PASSWORD    = 'lorenz2024';             // Passwort für Admin-Seite!
