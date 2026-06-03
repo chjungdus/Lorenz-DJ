@@ -365,9 +365,11 @@ section { padding: 96px 0; }
   margin: 18px 0;
 }
 
-/* Navbar-Links weiß auf dunklem Hero */
-.navbar:not(.scrolled) .nav-links a { color: rgba(255,255,255,.8); }
-.navbar:not(.scrolled) .nav-links a:hover { color: white; }
+/* Navbar-Links weiß auf dunklem Hero – nur Desktop, nicht im mobilen Dropdown */
+@media (min-width: 769px) {
+  .navbar:not(.scrolled) .nav-links a { color: rgba(255,255,255,.8); }
+  .navbar:not(.scrolled) .nav-links a:hover { color: white; }
+}
 
 /* === ÜBER MICH === */
 .about { background: var(--gradient-soft); }
