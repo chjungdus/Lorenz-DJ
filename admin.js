@@ -1,6 +1,7 @@
 // admin.js – Buchungsübersicht (nur lesen)
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Supabase wird erst nach Login initialisiert
+let supabase;
 
 let allBookings   = [];
 let currentFilter = 'all';
@@ -18,6 +19,7 @@ function checkPassword() {
 }
 
 function unlockDashboard() {
+  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   document.getElementById('admin-gate').style.display      = 'none';
   document.getElementById('admin-dashboard').style.display = 'block';
   sessionStorage.setItem('lorenz-admin', '1');

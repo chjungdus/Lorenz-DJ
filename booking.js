@@ -1,8 +1,5 @@
 // booking.js – Navbar-Scroll + Buchungsformular mit Supabase
 
-// Supabase-Client initialisieren
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
 // Navbar: Hintergrund beim Scrollen einblenden
 window.addEventListener('scroll', () => {
   document.getElementById('navbar')
@@ -19,7 +16,6 @@ hamburger.addEventListener('click', () => {
   hamburger.setAttribute('aria-expanded', isOpen);
 });
 
-// Menü schließen wenn ein Link geklickt wird
 navLinks.querySelectorAll('a').forEach(link => {
   link.addEventListener('click', () => {
     hamburger.classList.remove('open');
@@ -28,7 +24,6 @@ navLinks.querySelectorAll('a').forEach(link => {
   });
 });
 
-// Menü schließen beim Klick außerhalb
 document.addEventListener('click', (e) => {
   if (!e.target.closest('.navbar')) {
     hamburger.classList.remove('open');
@@ -38,14 +33,13 @@ document.addEventListener('click', (e) => {
 });
 
 // Buchungsformular
-const form       = document.getElementById('booking-form');
-const submitBtn  = document.getElementById('submit-btn');
-const msgBox     = document.getElementById('form-message');
+const form      = document.getElementById('booking-form');
+const submitBtn = document.getElementById('submit-btn');
+const msgBox    = document.getElementById('form-message');
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  // Konfiguration prüfen
   if (SUPABASE_URL === 'DEINE_SUPABASE_URL' || SUPABASE_ANON_KEY === 'DEIN_ANON_KEY') {
     showMessage('Bitte trage zuerst deine Supabase-Zugangsdaten in config.js ein.', 'error');
     return;
@@ -55,6 +49,9 @@ form.addEventListener('submit', async (e) => {
   submitBtn.textContent = 'Wird gesendet …';
   msgBox.className      = 'form-message';
   msgBox.textContent    = '';
+
+  // Supabase erst hier initialisieren – vermeidet Fehler bei Platzhalter-URL
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   const payload = {
     name:        form.name.value.trim(),
@@ -72,7 +69,7 @@ form.addEventListener('submit', async (e) => {
     showMessage('Etwas ist schiefgelaufen. Bitte versuch es nochmal oder meld dich direkt.', 'error');
     console.error(error);
   } else {
-    showMessage('🎉 Anfrage erfolgreich! Ich melde mich innerhalb von 24 Stunden bei dir.', 'success');
+    showMessage('Anfrage erfolgreich! Ich melde mich innerhalb von 24 Stunden bei dir.', 'success');
     form.reset();
   }
 
