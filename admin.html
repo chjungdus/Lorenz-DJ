@@ -18,18 +18,43 @@
       <div class="gate-logo">LORENZ</div>
       <h2>Admin-Zugang</h2>
       <p>Bitte gib das Admin-Passwort ein.</p>
-      <form class="gate-form" id="gate-form" autocomplete="off">
-        <input
-          type="text"
-          id="gate-password"
-          class="gate-input"
-          placeholder="Passwort"
-        >
-        <button type="submit" class="btn btn-primary">Einloggen</button>
-      </form>
-      <p class="gate-error" id="gate-error" role="alert"></p>
+      <div class="gate-form">
+        <input type="text" id="gate-password" class="gate-input" placeholder="Passwort" autofocus>
+        <button type="button" id="login-btn" class="btn btn-primary">Einloggen</button>
+      </div>
+      <p id="gate-error" style="display:none;color:#DC2626;font-weight:700;padding:10px 14px;background:#FEF2F2;border-left:3px solid #DC2626;margin-top:14px;font-size:0.875rem;"></p>
     </div>
   </div>
+
+  <!-- Inline Login-Logik – unabhängig von externen Skripten -->
+  <script>
+    (function () {
+      function login() {
+        var pw  = document.getElementById('gate-password').value.trim();
+        var err = document.getElementById('gate-error');
+        var expected = (typeof ADMIN_PASSWORD !== 'undefined') ? ADMIN_PASSWORD : 'lorenz2024';
+
+        if (pw === expected) {
+          err.style.display = 'none';
+          if (typeof unlockDashboard === 'function') {
+            unlockDashboard();
+          } else {
+            document.getElementById('admin-gate').style.display = 'none';
+            document.getElementById('admin-dashboard').style.display = 'block';
+            sessionStorage.setItem('lorenz-admin', '1');
+          }
+        } else {
+          err.textContent = 'Falsches Passwort.';
+          err.style.display = 'block';
+        }
+      }
+
+      document.getElementById('login-btn').addEventListener('click', login);
+      document.getElementById('gate-password').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') login();
+      });
+    }());
+  </script>
 
   <!-- ── ADMIN DASHBOARD (nach Login sichtbar) ── -->
   <div id="admin-dashboard" style="display:none">

@@ -6,16 +6,6 @@ let currentYear, currentMonth;
 
 // ── PASSWORT-GATE ────────────────────────────────────────
 
-function checkPassword() {
-  const input = document.getElementById('gate-password').value;
-  if (input === ADMIN_PASSWORD) {
-    unlockCalendar();
-  } else {
-    document.getElementById('gate-error').textContent = 'Falsches Passwort.';
-    document.getElementById('gate-password').focus();
-  }
-}
-
 function unlockCalendar() {
   try {
     supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -38,11 +28,6 @@ function logout() {
   sessionStorage.removeItem('lorenz-cal');
   location.reload();
 }
-
-document.getElementById('cal-gate-form').addEventListener('submit', (e) => {
-  e.preventDefault();
-  checkPassword();
-});
 
 const calLogoutBtn = document.getElementById('cal-logout-btn');
 if (calLogoutBtn) calLogoutBtn.addEventListener('click', logout);

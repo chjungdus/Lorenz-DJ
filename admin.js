@@ -1,27 +1,16 @@
-// admin.js – Buchungsübersicht (nur lesen)
+// admin.js – Dashboard (nach Login)
 
 let supabase;
 let allBookings   = [];
 let currentFilter = 'all';
 
-// ── PASSWORT-GATE ─────────────────────────────────────────
-
-function checkPassword() {
-  const input = document.getElementById('gate-password').value;
-  if (input === ADMIN_PASSWORD) {
-    unlockDashboard();
-  } else {
-    document.getElementById('gate-error').textContent = 'Falsches Passwort.';
-    document.getElementById('gate-password').focus();
-  }
-}
-
 function unlockDashboard() {
   try {
     supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   } catch (e) {
-    document.getElementById('gate-error').textContent = 'Verbindungsfehler. Bitte Seite neu laden.';
-    console.error('Supabase init failed:', e);
+    var err = document.getElementById('gate-error');
+    if (err) { err.textContent = 'Verbindungsfehler – Seite neu laden.'; err.style.display = 'block'; }
+    console.error(e);
     return;
   }
   document.getElementById('admin-gate').style.display      = 'none';
@@ -35,27 +24,22 @@ function logout() {
   location.reload();
 }
 
-// Events binden – Form-Submit ist am zuverlässigsten (Enter + Button)
-document.getElementById('gate-form').addEventListener('submit', (e) => {
-  e.preventDefault();
-  checkPassword();
-});
-
-const logoutBtn = document.getElementById('logout-btn');
-if (logoutBtn) logoutBtn.addEventListener('click', logout);
-
 // Filter-Buttons
-const filterBar = document.getElementById('filter-bar');
+var filterBar = document.getElementById('filter-bar');
 if (filterBar) {
-  filterBar.addEventListener('click', (e) => {
-    const btn = e.target.closest('.filter-btn');
+  filterBar.addEventListener('click', function (e) {
+    var btn = e.target.closest('.filter-btn');
     if (!btn) return;
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.filter-btn').forEach(function (b) { b.classList.remove('active'); });
     btn.classList.add('active');
     currentFilter = btn.dataset.filter;
     renderTable(currentFilter);
   });
 }
+
+// Logout-Button
+var logoutBtn = document.getElementById('logout-btn');
+if (logoutBtn) logoutBtn.addEventListener('click', logout);
 
 // Session noch aktiv?
 if (sessionStorage.getItem('lorenz-admin') === '1') unlockDashboard();
@@ -115,7 +99,7 @@ function renderTable(filter) {
       <td class="td-name">${esc(b.name)}</td>
       <td><a href="mailto:${esc(b.email)}">${esc(b.email)}</a></td>
       <td><a href="tel:${esc(b.phone)}">${esc(b.phone)}</a></td>
-      <td>${b.event_time ? b.event_time.slice(0, 5) + (b.event_time_end ? ' – ' + b.event_time_end.slice(0, 5) : '') : '–'}</td>
+      <td>${b.event_time ? b.event_time.slice(0,5) + (b.event_time_end ? ' – ' + b.event_time_end.slice(0,5) : '') : '–'}</td>
       <td class="td-center">${b.guest_count}</td>
       <td class="td-msg" title="${b.message ? esc(b.message) : ''}">${b.message ? esc(b.message) : '<span class="muted">–</span>'}</td>
       <td><span class="status-badge status-${esc(b.status)}">${statusLabel(b.status)}</span></td>
@@ -134,9 +118,7 @@ function formatDate(str) {
 
 function formatDateTime(str) {
   if (!str) return '–';
-  return new Date(str).toLocaleDateString('de-DE', {
-    day: '2-digit', month: '2-digit', year: 'numeric'
-  });
+  return new Date(str).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
 
 function statusLabel(s) {
@@ -145,9 +127,6 @@ function statusLabel(s) {
 
 function esc(str) {
   return String(str)
-    .replace(/&/g,  '&amp;')
-    .replace(/</g,  '&lt;')
-    .replace(/>/g,  '&gt;')
-    .replace(/"/g,  '&quot;')
-    .replace(/'/g,  '&#39;');
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
