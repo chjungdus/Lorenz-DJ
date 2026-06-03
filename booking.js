@@ -1,5 +1,16 @@
 // booking.js – Navbar-Scroll + Buchungsformular mit Supabase
 
+// Scroll-Reveal
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('revealed');
+      revealObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12 });
+document.querySelectorAll('[data-reveal]').forEach(el => revealObserver.observe(el));
+
 // Navbar: Hintergrund beim Scrollen einblenden
 window.addEventListener('scroll', () => {
   document.getElementById('navbar')
