@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS bookings (
   email       TEXT        NOT NULL,
   phone       TEXT        NOT NULL,
   event_date  DATE        NOT NULL,
-  event_time  TIME        NOT NULL,
+  event_time     TIME        NOT NULL,
+  event_time_end TIME,
   guest_count INTEGER     NOT NULL CHECK (guest_count > 0),
   message     TEXT,
   status      TEXT        NOT NULL DEFAULT 'pending'
@@ -28,3 +29,7 @@ CREATE POLICY "allow_public_insert" ON bookings
 -- HINWEIS: Für echte Sicherheit → Supabase Auth einsetzen!
 CREATE POLICY "allow_public_select" ON bookings
   FOR SELECT TO anon USING (true);
+
+-- Falls die Tabelle bereits existiert: Spalte nachträglich hinzufügen
+-- (Diese Zeile ist sicher – schlägt fehl wenn Spalte schon existiert, einfach ignorieren)
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS event_time_end TIME;

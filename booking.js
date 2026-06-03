@@ -58,8 +58,9 @@ form.addEventListener('submit', async (e) => {
     email:       form.email.value.trim(),
     phone:       form.phone.value.trim(),
     event_date:  form.event_date.value,
-    event_time:  form.event_time.value,
-    guest_count: parseInt(form.guest_count.value, 10),
+    event_time:     form.event_time.value,
+    event_time_end: form.event_time_end.value || null,
+    guest_count:    parseInt(form.guest_count.value, 10),
     message:     form.message.value.trim() || null,
   };
 

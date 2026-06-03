@@ -920,6 +920,19 @@ section { padding: 96px 0; }
 
 .form-group textarea { resize: vertical; min-height: 120px; }
 
+.time-range {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.time-range input { flex: 1; }
+.time-sep {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
 .form-submit { margin-top: 4px; }
 .form-submit .btn { font-size: 0.95rem; padding: 15px 44px; }
 

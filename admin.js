@@ -94,7 +94,7 @@ function renderTable(filter) {
       <td class="td-name">${esc(b.name)}</td>
       <td><a href="mailto:${esc(b.email)}">${esc(b.email)}</a></td>
       <td><a href="tel:${esc(b.phone)}">${esc(b.phone)}</a></td>
-      <td>${b.event_time ? b.event_time.slice(0, 5) : '–'}</td>
+      <td>${b.event_time ? b.event_time.slice(0, 5) + (b.event_time_end ? ' – ' + b.event_time_end.slice(0, 5) : '') : '–'}</td>
       <td class="td-center">${b.guest_count}</td>
       <td class="td-msg" title="${b.message ? esc(b.message) : ''}">${b.message ? esc(b.message) : '<span class="muted">–</span>'}</td>
       <td><span class="status-badge status-${esc(b.status)}">${statusLabel(b.status)}</span></td>
