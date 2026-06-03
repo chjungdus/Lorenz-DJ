@@ -15,7 +15,7 @@
   <!-- ── NAVIGATION ── -->
   <nav class="navbar" id="navbar">
     <a href="#" class="nav-logo">LORENZ</a>
-    <ul class="nav-links">
+    <ul class="nav-links" id="nav-links">
       <li><a href="#about">Über mich</a></li>
       <li><a href="#equipment">Equipment</a></li>
       <li><a href="#preise">Preise</a></li>
@@ -23,7 +23,14 @@
       <li><a href="#anfahrt">Anfahrt</a></li>
       <li><a href="#booking">Buchen</a></li>
     </ul>
-    <a href="#booking" class="btn btn-primary btn-sm">Jetzt Buchen</a>
+    <div class="nav-right">
+      <a href="#booking" class="btn btn-primary btn-sm nav-cta">Jetzt Buchen</a>
+      <button class="nav-hamburger" id="nav-hamburger" aria-label="Menü öffnen" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
   </nav>
 
   <!-- ── HERO ── -->
@@ -157,32 +164,26 @@
       </div>
       <div class="equipment-grid">
         <div class="equip-card">
-          <div class="equip-icon">🎛️</div>
           <h3>DJ-Controller</h3>
           <p>Pioneer DDJ-1000<br>4-Kanal, professionell</p>
         </div>
         <div class="equip-card">
-          <div class="equip-icon">🔊</div>
           <h3>Lautsprecher</h3>
           <p>2× RCF Art 745-A<br>je 1.400 W, aktiv</p>
         </div>
         <div class="equip-card">
-          <div class="equip-icon">💥</div>
           <h3>Subwoofer</h3>
           <p>RCF Sub 705-AS II<br>1.000 W (zubuchbar)</p>
         </div>
         <div class="equip-card">
-          <div class="equip-icon">💡</div>
           <h3>Lichtanlage</h3>
           <p>Moving Heads, LED-Bar<br>Laser &amp; Stroboskop</p>
         </div>
         <div class="equip-card">
-          <div class="equip-icon">🎤</div>
           <h3>Mikrofon</h3>
           <p>Shure SM58 Funk<br>Ansagen &amp; Moderation</p>
         </div>
         <div class="equip-card">
-          <div class="equip-icon">💻</div>
           <h3>Software</h3>
           <p>Serato DJ Pro<br>Rekordbox-kompatibel</p>
         </div>
@@ -420,9 +421,8 @@
             4. Kopiere den <iframe>-Code und ersetze den map-placeholder div
           -->
           <div class="map-placeholder">
-            <p>🗺️</p>
             <p><strong>Karte hier einbetten</strong></p>
-            <p>Google Maps → Teilen → Karte einbetten<br>Dann diesen Block durch das &lt;iframe&gt; ersetzen.</p>
+            <p>Google Maps → Adresse suchen → Teilen → Karte einbetten<br>Den &lt;iframe&gt;-Code hier einfügen und diesen Block ersetzen.</p>
           </div>
         </div>
       </div>

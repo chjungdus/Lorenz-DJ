@@ -9,6 +9,34 @@ window.addEventListener('scroll', () => {
     .classList.toggle('scrolled', window.scrollY > 50);
 });
 
+// Hamburger-Menü
+const hamburger = document.getElementById('nav-hamburger');
+const navLinks  = document.getElementById('nav-links');
+
+hamburger.addEventListener('click', () => {
+  const isOpen = hamburger.classList.toggle('open');
+  navLinks.classList.toggle('open', isOpen);
+  hamburger.setAttribute('aria-expanded', isOpen);
+});
+
+// Menü schließen wenn ein Link geklickt wird
+navLinks.querySelectorAll('a').forEach(link => {
+  link.addEventListener('click', () => {
+    hamburger.classList.remove('open');
+    navLinks.classList.remove('open');
+    hamburger.setAttribute('aria-expanded', 'false');
+  });
+});
+
+// Menü schließen beim Klick außerhalb
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.navbar')) {
+    hamburger.classList.remove('open');
+    navLinks.classList.remove('open');
+    hamburger.setAttribute('aria-expanded', 'false');
+  }
+});
+
 // Buchungsformular
 const form       = document.getElementById('booking-form');
 const submitBtn  = document.getElementById('submit-btn');
