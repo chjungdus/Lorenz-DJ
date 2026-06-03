@@ -17,7 +17,13 @@ function checkPassword() {
 }
 
 function unlockCalendar() {
-  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  try {
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  } catch (e) {
+    document.getElementById('gate-error').textContent = 'Verbindungsfehler. Bitte Seite neu laden.';
+    console.error('Supabase init failed:', e);
+    return;
+  }
   document.getElementById('cal-gate').style.display = 'none';
   document.getElementById('cal-app').style.display  = 'block';
   sessionStorage.setItem('lorenz-cal', '1');
@@ -33,6 +39,7 @@ function logout() {
   location.reload();
 }
 
+document.getElementById('cal-login-btn').addEventListener('click', checkPassword);
 document.getElementById('gate-password').addEventListener('keydown', (e) => {
   if (e.key === 'Enter') checkPassword();
 });

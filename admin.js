@@ -1,8 +1,6 @@
 // admin.js – Buchungsübersicht (nur lesen)
 
-// Supabase wird erst nach Login initialisiert
 let supabase;
-
 let allBookings   = [];
 let currentFilter = 'all';
 
@@ -19,7 +17,13 @@ function checkPassword() {
 }
 
 function unlockDashboard() {
-  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  try {
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  } catch (e) {
+    document.getElementById('gate-error').textContent = 'Verbindungsfehler. Bitte Seite neu laden.';
+    console.error('Supabase init failed:', e);
+    return;
+  }
   document.getElementById('admin-gate').style.display      = 'none';
   document.getElementById('admin-dashboard').style.display = 'block';
   sessionStorage.setItem('lorenz-admin', '1');
@@ -31,10 +35,27 @@ function logout() {
   location.reload();
 }
 
-// Enter-Taste im Passwortfeld
+// Events binden
+document.getElementById('login-btn').addEventListener('click', checkPassword);
 document.getElementById('gate-password').addEventListener('keydown', (e) => {
   if (e.key === 'Enter') checkPassword();
 });
+
+const logoutBtn = document.getElementById('logout-btn');
+if (logoutBtn) logoutBtn.addEventListener('click', logout);
+
+// Filter-Buttons
+const filterBar = document.getElementById('filter-bar');
+if (filterBar) {
+  filterBar.addEventListener('click', (e) => {
+    const btn = e.target.closest('.filter-btn');
+    if (!btn) return;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter;
+    renderTable(currentFilter);
+  });
+}
 
 // Session noch aktiv?
 if (sessionStorage.getItem('lorenz-admin') === '1') unlockDashboard();
@@ -51,7 +72,7 @@ async function loadBookings() {
 
   if (error) {
     const el = document.getElementById('admin-loading');
-    el.textContent = 'Fehler beim Laden der Buchungen. Bitte Supabase-Konfiguration prüfen.';
+    el.textContent = 'Fehler beim Laden. Supabase-Konfiguration prüfen.';
     el.style.display = 'block';
     console.error(error);
     return;
@@ -102,17 +123,6 @@ function renderTable(filter) {
     </tr>
   `).join('');
 }
-
-// ── FILTER-BUTTONS ────────────────────────────────────────
-
-document.getElementById('filter-bar').addEventListener('click', (e) => {
-  const btn = e.target.closest('.filter-btn');
-  if (!btn) return;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  currentFilter = btn.dataset.filter;
-  renderTable(currentFilter);
-});
 
 // ── HILFSFUNKTIONEN ───────────────────────────────────────
 
