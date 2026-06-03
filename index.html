@@ -19,7 +19,6 @@
       <li><a href="#about">Über mich</a></li>
       <li><a href="#equipment">Equipment</a></li>
       <li><a href="#preise">Preise</a></li>
-      <li><a href="#galerie">Fotos</a></li>
       <li><a href="#events">Events</a></li>
       <li><a href="#anfahrt">Anfahrt</a></li>
       <li><a href="#booking">Buchen</a></li>
@@ -36,8 +35,21 @@
 
   <!-- ── HERO ── -->
   <section class="hero" id="hero">
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
+    <div class="hero-media">
+      <!--
+        VIDEO: Eigenes DJ-Video hier einfügen.
+        Einfach src="hero.mp4" auf den eigenen Dateinamen ändern.
+        Das Poster-Bild (poster="hero-poster.jpg") wird angezeigt solange das Video lädt.
+      -->
+      <video class="hero-video" autoplay muted loop playsinline poster="hero-poster.jpg">
+        <source src="hero.mp4" type="video/mp4">
+      </video>
+      <!--
+        ALTERNATIV ohne Video – nur ein Foto:
+        <img class="hero-video" src="hero.jpg" alt="DJ Setup">
+      -->
+      <div class="hero-overlay"></div>
+    </div>
     <div class="container hero-inner">
       <div class="hero-left">
         <p class="hero-eyebrow">DJ &middot; Partys &middot; Events</p>
@@ -102,7 +114,7 @@
         <h2>Wer steckt hinter den Decks?</h2>
       </div>
       <div class="about-grid">
-        <div class="about-text">
+        <div class="about-left">
           <p class="about-lead">
             Ich bin Lorenz, 16 Jahre alt und DJ aus [Stadtteil]. Seit ein paar Jahren leg ich auf
             verschiedenen Partys und Veranstaltungen auf – Geburtstage, Schulpartys, Jugendclubs
@@ -117,32 +129,36 @@
             Musikwünsche sind immer willkommen. Schick mir vor dem Event gerne eine Liste und
             ich bau sie mit ein.
           </p>
+          <div class="about-facts">
+            <div class="fact-row">
+              <span class="fact-key">Alter</span>
+              <span class="fact-val">16 Jahre</span>
+            </div>
+            <div class="fact-row">
+              <span class="fact-key">Standort</span>
+              <span class="fact-val">[Stadtteil], [Stadt] &amp; Umgebung</span>
+            </div>
+            <div class="fact-row">
+              <span class="fact-key">Genres</span>
+              <span class="fact-val">House, Hip-Hop, R&amp;B, Charts, Afrobeats, 2000s</span>
+            </div>
+            <div class="fact-row">
+              <span class="fact-key">Buchungsweg</span>
+              <span class="fact-val">Formular unten oder direkt per Telefon</span>
+            </div>
+            <div class="fact-row">
+              <span class="fact-key">Stornierung</span>
+              <span class="fact-val">Bis 2 Wochen vorher kostenfrei</span>
+            </div>
+          </div>
         </div>
-        <div class="about-facts">
-          <div class="fact-row">
-            <span class="fact-key">Alter</span>
-            <span class="fact-val">16 Jahre</span>
-          </div>
-          <div class="fact-row">
-            <span class="fact-key">Standort</span>
-            <span class="fact-val">[Stadtteil], [Stadt] &amp; Umgebung</span>
-          </div>
-          <div class="fact-row">
-            <span class="fact-key">Genres</span>
-            <span class="fact-val">House, Hip-Hop, R&amp;B, Charts, Afrobeats, 2000s</span>
-          </div>
-          <div class="fact-row">
-            <span class="fact-key">Sprachen</span>
-            <span class="fact-val">Deutsch, Englisch</span>
-          </div>
-          <div class="fact-row">
-            <span class="fact-key">Buchungsweg</span>
-            <span class="fact-val">Formular unten oder direkt per Telefon</span>
-          </div>
-          <div class="fact-row">
-            <span class="fact-key">Stornierung</span>
-            <span class="fact-val">Bis 2 Wochen vorher kostenfrei</span>
-          </div>
+        <div class="about-photo">
+          <!--
+            FOTO: Eigenes Bild hier einfügen – am besten ein Hochformat-Foto
+            vom Setup oder von dir am Pult.
+            <img src="about.jpg" alt="Lorenz am DJ-Pult">
+          -->
+          <div class="photo-placeholder">Foto einfügen</div>
         </div>
       </div>
     </div>
@@ -263,37 +279,6 @@
     </div>
   </section>
 
-  <!-- ── GALERIE ── -->
-  <section class="galerie" id="galerie">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-tag">Galerie</span>
-        <h2>Fotos</h2>
-      </div>
-      <div class="galerie-grid">
-        <!-- Ersetze jeden foto-slot durch: <img src="dein-foto.jpg" alt="Beschreibung"> -->
-        <div class="foto-slot foto-slot-wide">
-          <span class="foto-label">Foto 1</span>
-        </div>
-        <div class="foto-slot">
-          <span class="foto-label">Foto 2</span>
-        </div>
-        <div class="foto-slot">
-          <span class="foto-label">Foto 3</span>
-        </div>
-        <div class="foto-slot">
-          <span class="foto-label">Foto 4</span>
-        </div>
-        <div class="foto-slot foto-slot-wide">
-          <span class="foto-label">Foto 5</span>
-        </div>
-        <div class="foto-slot">
-          <span class="foto-label">Foto 6</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- ── EVENTS & ANLÄSSE ── -->
   <section class="events" id="events">
     <div class="container">
@@ -353,6 +338,19 @@
       </div>
     </div>
   </section>
+
+  <!-- ── FOTO-BREAK ── -->
+  <div class="photo-break">
+    <!--
+      HINTERGRUND-FOTO: Hier ein Bild vom Set oder der Tanzfläche einfügen.
+      Entweder als img-Tag:
+        <img src="break.jpg" alt="Live-Set">
+      Oder als CSS background-image auf dem .photo-break div:
+        style="background-image: url('break.jpg')"
+    -->
+    <div class="photo-break-placeholder">Hintergrund-Foto einfügen</div>
+    <div class="photo-break-overlay"></div>
+  </div>
 
   <!-- ── ANFAHRT ── -->
   <section class="anfahrt" id="anfahrt">

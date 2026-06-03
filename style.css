@@ -211,7 +211,7 @@ section { padding: 96px 0; }
 /* === HERO === */
 .hero {
   min-height: 100vh;
-  background: var(--white);
+  background: #0A0515;
   position: relative;
   overflow: hidden;
   display: flex;
@@ -219,24 +219,28 @@ section { padding: 96px 0; }
   padding-top: 100px;
 }
 
-.blob {
+/* Video / Foto Hintergrund */
+.hero-media {
   position: absolute;
-  border-radius: 50%;
-  filter: blur(120px);
-  opacity: 0.13;
-  pointer-events: none;
+  inset: 0;
+  z-index: 0;
 }
 
-.blob-1 {
-  width: 600px; height: 600px;
-  background: #7C3AED;
-  top: -200px; right: -100px;
+.hero-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
-.blob-2 {
-  width: 500px; height: 500px;
-  background: #EC4899;
-  bottom: -150px; left: -100px;
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(10, 5, 25, 0.88) 0%,
+    rgba(50, 10, 90, 0.78) 100%
+  );
 }
 
 .hero-inner {
@@ -254,7 +258,7 @@ section { padding: 96px 0; }
   font-weight: 700;
   letter-spacing: 0.45em;
   text-transform: uppercase;
-  color: var(--purple);
+  color: var(--purple-light);
   margin-bottom: 16px;
 }
 
@@ -272,7 +276,7 @@ section { padding: 96px 0; }
 
 .hero-tagline {
   font-size: clamp(1rem, 1.8vw, 1.2rem);
-  color: var(--text-muted);
+  color: rgba(255,255,255,.7);
   margin-bottom: 36px;
   line-height: 1.7;
 }
@@ -284,12 +288,22 @@ section { padding: 96px 0; }
   margin-bottom: 48px;
 }
 
+/* Outline-Button auf dunklem Hintergrund */
+.hero-left .btn-outline {
+  color: rgba(255,255,255,.9);
+  border-color: rgba(255,255,255,.25);
+}
+.hero-left .btn-outline:hover {
+  border-color: white;
+  color: white;
+}
+
 .hero-quick {
   display: flex;
   gap: 32px;
   flex-wrap: wrap;
   padding-top: 24px;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid rgba(255,255,255,.1);
 }
 
 .quick-item {
@@ -297,7 +311,7 @@ section { padding: 96px 0; }
   flex-direction: column;
   gap: 2px;
   font-size: 0.875rem;
-  color: var(--text);
+  color: rgba(255,255,255,.85);
 }
 
 .quick-label {
@@ -305,17 +319,19 @@ section { padding: 96px 0; }
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: var(--text-muted);
+  color: rgba(255,255,255,.4);
 }
 
-.quick-item a { color: var(--text); text-decoration: none; font-weight: 600; }
-.quick-item a:hover { color: var(--purple); }
+.quick-item a { color: rgba(255,255,255,.85); text-decoration: none; font-weight: 600; }
+.quick-item a:hover { color: white; }
 
-/* Hero Karte rechts */
+/* Hero Karte rechts – Glas auf dunklem BG */
 .hero-card {
-  background: var(--white);
-  border: 2px solid var(--border);
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
   padding: 32px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .hc-row {
@@ -330,7 +346,7 @@ section { padding: 96px 0; }
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--text-muted);
+  color: rgba(255,255,255,.4);
 }
 
 .hc-val {
@@ -345,21 +361,25 @@ section { padding: 96px 0; }
 
 .hc-divider {
   height: 1px;
-  background: var(--border);
+  background: rgba(255,255,255,.1);
   margin: 18px 0;
 }
+
+/* Navbar-Links weiß auf dunklem Hero */
+.navbar:not(.scrolled) .nav-links a { color: rgba(255,255,255,.8); }
+.navbar:not(.scrolled) .nav-links a:hover { color: white; }
 
 /* === ÜBER MICH === */
 .about { background: var(--gradient-soft); }
 
 .about-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 360px;
   gap: 60px;
   align-items: start;
 }
 
-.about-text p {
+.about-left p {
   color: var(--text-muted);
   font-size: 0.95rem;
   line-height: 1.85;
@@ -375,6 +395,39 @@ section { padding: 96px 0; }
 .about-facts {
   border: 2px solid var(--border);
   background: var(--white);
+  margin-top: 32px;
+}
+
+/* Foto-Slot neben dem Text */
+.about-photo {
+  position: sticky;
+  top: 120px;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  border: 2px solid var(--border);
+  background: var(--white);
+}
+
+.about-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.photo-placeholder {
+  width: 100%;
+  height: 100%;
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--border);
+  background: var(--surface);
 }
 
 .fact-row {
@@ -614,6 +667,42 @@ section { padding: 96px 0; }
   font-size: 0.875rem;
   color: var(--text-muted);
   line-height: 1.75;
+}
+
+/* === PHOTO BREAK === */
+.photo-break {
+  height: 420px;
+  position: relative;
+  overflow: hidden;
+  background: #0A0515;
+}
+
+.photo-break img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.photo-break-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(255,255,255,.2);
+  border: 2px dashed rgba(255,255,255,.1);
+}
+
+.photo-break-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(124,58,237,.55) 0%, rgba(236,72,153,.35) 100%);
+  pointer-events: none;
 }
 
 /* === ANFAHRT === */
@@ -943,9 +1032,8 @@ section { padding: 96px 0; }
   .hero-inner { grid-template-columns: 1fr; }
   .hero-right { display: none; }
   .about-grid { grid-template-columns: 1fr; }
+  .about-photo { position: static; aspect-ratio: 16 / 9; }
   .anfahrt-grid { grid-template-columns: 1fr; }
-  .preis-hochzeit { grid-template-columns: 1fr; gap: 24px; }
-  .preis-hochzeit-mid { grid-template-columns: 1fr; }
   .equipment-grid { grid-template-columns: 1fr 1fr; }
   .equip-card:nth-child(2n) { border-right: none; }
   .equip-card:nth-child(2n+1):nth-last-child(-n+2),
