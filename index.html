@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DJ Lorenz – Dein DJ für unvergessliche Events</title>
+  <meta name="description" content="DJ Lorenz – Hochzeiten, Geburtstage, Clubs und Corporate Events. Jetzt buchen!">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ── NAVIGATION ── -->
+  <nav class="navbar" id="navbar">
+    <a href="#" class="nav-logo">LORENZ</a>
+    <ul class="nav-links">
+      <li><a href="#about">Über mich</a></li>
+      <li><a href="#services">Events</a></li>
+      <li><a href="#booking">Buchen</a></li>
+    </ul>
+    <a href="#booking" class="btn btn-primary btn-sm">Jetzt Buchen</a>
+  </nav>
+
+  <!-- ── HERO ── -->
+  <section class="hero" id="hero">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">DJ &middot; Events &middot; Vibes</p>
+      <h1 class="hero-title">LORENZ</h1>
+      <p class="hero-sub">
+        Dein DJ für unvergessliche Momente –<br>
+        von der Hochzeit bis zum Club.
+      </p>
+      <div class="hero-actions">
+        <a href="#booking" class="btn btn-primary">Jetzt Buchen</a>
+        <a href="#services" class="btn btn-outline">Mehr erfahren</a>
+      </div>
+    </div>
+    <div
+      class="scroll-indicator"
+      onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'})"
+      aria-label="Nach unten scrollen"
+    >↓</div>
+  </section>
+
+  <!-- ── ABOUT ── -->
+  <section class="about" id="about">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-text">
+          <span class="section-tag">Über mich</span>
+          <h2 class="section-title">Musik, die verbindet.</h2>
+          <p>
+            Ich bin Lorenz – DJ aus Leidenschaft. Mit über 5 Jahren Erfahrung
+            auf Hochzeiten, Geburtstagen, Firmenevents und Clubs weiß ich, wie
+            man jeden Raum zum Kochen bringt. Mein Ziel ist einfach: dass jeder
+            Gast am Ende sagt – <em>das war eine geile Party.</em>
+          </p>
+          <div class="stats">
+            <div class="stat">
+              <span class="stat-num">200+</span>
+              <span class="stat-label">Events</span>
+            </div>
+            <div class="stat">
+              <span class="stat-num">5+</span>
+              <span class="stat-label">Jahre</span>
+            </div>
+            <div class="stat">
+              <span class="stat-num">100%</span>
+              <span class="stat-label">Herzblut</span>
+            </div>
+          </div>
+        </div>
+        <div class="about-visual">
+          <div class="visual-card">
+            <div class="visual-card-inner">♪</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SERVICES ── -->
+  <section class="services" id="services">
+    <div class="container">
+      <span class="section-tag center">Was ich biete</span>
+      <h2 class="section-title center">Events &amp; Anlässe</h2>
+      <div class="services-grid">
+
+        <div class="service-card">
+          <span class="service-icon">💍</span>
+          <h3>Hochzeiten</h3>
+          <p>Euer perfekter Soundtrack für den schönsten Tag – von der Trauung bis zum letzten Tanz.</p>
+        </div>
+
+        <div class="service-card">
+          <span class="service-icon">🎂</span>
+          <h3>Geburtstage</h3>
+          <p>Partys, die man so schnell nicht vergisst. Ich bring die Musik, du bringst die Leute.</p>
+        </div>
+
+        <div class="service-card">
+          <span class="service-icon">🏢</span>
+          <h3>Corporate Events</h3>
+          <p>Professionelle Unterhaltung für Firmenfeiern, Teamevents und Produktpräsentationen.</p>
+        </div>
+
+        <div class="service-card">
+          <span class="service-icon">🎉</span>
+          <h3>Clubs &amp; Partys</h3>
+          <p>Energie pur auf der Tanzfläche. Von House über Hip-Hop bis Techno – ich kenn mein Publikum.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── BOOKING ── -->
+  <section class="booking" id="booking">
+    <div class="container">
+      <span class="section-tag center">Buchung</span>
+      <h2 class="section-title center">Lass uns was planen.</h2>
+      <p class="section-sub center">
+        Füll das Formular aus – ich meld mich innerhalb von 24&nbsp;Stunden bei dir.
+      </p>
+
+      <form class="booking-form" id="booking-form" novalidate>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="name">Name *</label>
+            <input type="text" id="name" name="name" placeholder="Max Mustermann" required>
+          </div>
+          <div class="form-group">
+            <label for="email">E-Mail *</label>
+            <input type="email" id="email" name="email" placeholder="max@email.de" required>
+          </div>
+          <div class="form-group">
+            <label for="phone">Telefon *</label>
+            <input type="tel" id="phone" name="phone" placeholder="+49 123 456789" required>
+          </div>
+          <div class="form-group">
+            <label for="guest_count">Personenanzahl *</label>
+            <input type="number" id="guest_count" name="guest_count" placeholder="50" min="1" max="10000" required>
+          </div>
+          <div class="form-group">
+            <label for="event_date">Datum *</label>
+            <input type="date" id="event_date" name="event_date" required>
+          </div>
+          <div class="form-group">
+            <label for="event_time">Uhrzeit *</label>
+            <input type="time" id="event_time" name="event_time" required>
+          </div>
+          <div class="form-group full">
+            <label for="message">Nachricht</label>
+            <textarea id="message" name="message" placeholder="Erzähl mir von deinem Event – was hast du dir vorgestellt?"></textarea>
+          </div>
+        </div>
+        <div class="form-submit">
+          <button type="submit" class="btn btn-primary" id="submit-btn">
+            Anfrage absenden
+          </button>
+        </div>
+        <div class="form-message" id="form-message" role="alert"></div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ── -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <span class="footer-logo">LORENZ</span>
+        <p class="footer-copy">© 2024 DJ Lorenz. Alle Rechte vorbehalten.</p>
+        <a href="admin.html" class="footer-admin">Admin</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SCRIPTS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="booking.js"></script>
+
+</body>
+</html>

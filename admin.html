@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin – DJ Lorenz</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+  <!-- ── PASSWORT-GATE ── -->
+  <div class="admin-gate" id="admin-gate">
+    <div class="gate-card">
+      <div class="gate-logo">LORENZ</div>
+      <h2>Admin-Zugang</h2>
+      <p>Bitte gib das Admin-Passwort ein.</p>
+      <div class="gate-form">
+        <input
+          type="password"
+          id="gate-password"
+          class="gate-input"
+          placeholder="Passwort"
+          autocomplete="current-password"
+        >
+        <button onclick="checkPassword()" class="btn btn-primary">Einloggen</button>
+      </div>
+      <p class="gate-error" id="gate-error" role="alert"></p>
+    </div>
+  </div>
+
+  <!-- ── ADMIN DASHBOARD (nach Login sichtbar) ── -->
+  <div id="admin-dashboard" style="display:none">
+
+    <header class="admin-header">
+      <div class="container">
+        <div class="admin-header-inner">
+          <a href="index.html" class="nav-logo">LORENZ</a>
+          <span class="admin-page-title">Buchungsübersicht</span>
+          <button onclick="logout()" class="btn btn-outline btn-sm">Abmelden</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="admin-main">
+      <div class="container">
+
+        <!-- Stats-Karten -->
+        <div class="admin-stats">
+          <div class="admin-stat-card">
+            <span class="admin-stat-num" id="stat-total">–</span>
+            <span class="admin-stat-label">Gesamt</span>
+          </div>
+          <div class="admin-stat-card">
+            <span class="admin-stat-num pending" id="stat-pending">–</span>
+            <span class="admin-stat-label">Ausstehend</span>
+          </div>
+          <div class="admin-stat-card">
+            <span class="admin-stat-num confirmed" id="stat-confirmed">–</span>
+            <span class="admin-stat-label">Bestätigt</span>
+          </div>
+          <div class="admin-stat-card">
+            <span class="admin-stat-num cancelled" id="stat-cancelled">–</span>
+            <span class="admin-stat-label">Abgelehnt</span>
+          </div>
+        </div>
+
+        <!-- Filter -->
+        <div class="admin-filter" id="filter-bar">
+          <button class="filter-btn active" data-filter="all">Alle</button>
+          <button class="filter-btn" data-filter="pending">Ausstehend</button>
+          <button class="filter-btn" data-filter="confirmed">Bestätigt</button>
+          <button class="filter-btn" data-filter="cancelled">Abgelehnt</button>
+        </div>
+
+        <!-- Tabelle -->
+        <div class="admin-table-wrapper">
+          <div id="admin-loading" class="admin-loading">Buchungen werden geladen …</div>
+          <table class="admin-table" id="bookings-table" style="display:none">
+            <thead>
+              <tr>
+                <th>Eventdatum</th>
+                <th>Name</th>
+                <th>E-Mail</th>
+                <th>Telefon</th>
+                <th>Uhrzeit</th>
+                <th>Personen</th>
+                <th>Nachricht</th>
+                <th>Status</th>
+                <th>Eingegangen</th>
+              </tr>
+            </thead>
+            <tbody id="bookings-body"></tbody>
+          </table>
+          <p class="admin-empty" id="admin-empty" style="display:none">
+            Keine Buchungen gefunden.
+          </p>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="admin.js"></script>
+
+</body>
+</html>
