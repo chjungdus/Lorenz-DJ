@@ -11,6 +11,43 @@ const revealObserver = new IntersectionObserver((entries) => {
 }, { threshold: 0.12 });
 document.querySelectorAll('[data-reveal]').forEach(el => revealObserver.observe(el));
 
+// Ripple-Effekt auf allen Buttons
+document.querySelectorAll('.btn').forEach(btn => {
+  btn.style.position = 'relative';
+  btn.style.overflow = 'hidden';
+  btn.addEventListener('click', (e) => {
+    const r = document.createElement('span');
+    r.className = 'ripple';
+    const rect = btn.getBoundingClientRect();
+    r.style.left = (e.clientX - rect.left - 6) + 'px';
+    r.style.top  = (e.clientY - rect.top  - 6) + 'px';
+    btn.appendChild(r);
+    setTimeout(() => r.remove(), 700);
+  });
+});
+
+// Stats-Counter im Hero-Card
+function animateCounter(el, target, suffix, duration) {
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduced) return;
+  let start = null;
+  function step(ts) {
+    if (!start) start = ts;
+    const p = Math.min((ts - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.floor(eased * target) + suffix;
+    if (p < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.querySelectorAll('[data-counter]').forEach(el => {
+      animateCounter(el, parseInt(el.dataset.counter), el.dataset.suffix || '', 1400);
+    });
+  }, 1300);
+});
+
 // Navbar: Hintergrund beim Scrollen einblenden
 window.addEventListener('scroll', () => {
   document.getElementById('navbar')

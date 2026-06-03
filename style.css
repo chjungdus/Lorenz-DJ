@@ -266,10 +266,6 @@ section { padding: 96px 0; }
   font-size: clamp(48px, 13vw, 160px);
   font-weight: 900;
   line-height: 0.9;
-  background: var(--gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
   letter-spacing: -0.05em;
   margin-bottom: 24px;
 }
@@ -1203,9 +1199,11 @@ section { padding: 96px 0; }
   content: '';
   position: absolute;
   bottom: 0; left: 0;
-  width: 36px; height: 3px;
+  width: 0; height: 3px;
   background: var(--gradient);
+  transition: width 0.75s cubic-bezier(.22,.68,0,1.3) 0.25s;
 }
+.section-header.revealed h2::after { width: 36px; }
 
 /* ── HERO CARD GLASS ENHANCE ── */
 .hero-card {
@@ -1258,15 +1256,15 @@ section { padding: 96px 0; }
 }
 .anfahrt-block a:hover { color: var(--purple); text-decoration: none; }
 
-/* ── SCROLL REVEAL ── */
+/* ── SCROLL REVEAL (with scale for more drama) ── */
 [data-reveal] {
   opacity: 0;
-  transform: translateY(22px);
-  transition: opacity 0.55s cubic-bezier(.22,.68,0,1.1), transform 0.55s cubic-bezier(.22,.68,0,1.1);
+  transform: translateY(32px) scale(0.97);
+  transition: opacity 0.65s cubic-bezier(.22,.68,0,1.1), transform 0.65s cubic-bezier(.22,.68,0,1.1);
 }
 [data-reveal].revealed {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateY(0) scale(1);
 }
 [data-reveal-delay="1"] { transition-delay: 0.08s; }
 [data-reveal-delay="2"] { transition-delay: 0.16s; }
@@ -1282,4 +1280,118 @@ section { padding: 96px 0; }
   .equip-card, .preis-card, .event-item { transition: none !important; }
   .equip-card::before { transition: none !important; }
   html { scroll-behavior: auto; }
+}
+
+/* ============================================================
+   KRASSE ANIMATIONEN
+   ============================================================ */
+
+/* ── HERO TITLE: BUCHSTABEN FALLEN REIN ── */
+@keyframes letterDrop {
+  0%   { opacity: 0; transform: translateY(-60px) scaleY(0.55); filter: blur(8px); }
+  65%  { transform: translateY(8px) scaleY(1.05); filter: blur(0); }
+  100% { opacity: 1; transform: translateY(0) scaleY(1); }
+}
+
+.hero-title span {
+  display: inline-block;
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: letterDrop 0.7s cubic-bezier(.22,.68,0,1.2) both;
+}
+.hero-title span:nth-child(1) { animation-delay: 0.05s; }
+.hero-title span:nth-child(2) { animation-delay: 0.13s; }
+.hero-title span:nth-child(3) { animation-delay: 0.21s; }
+.hero-title span:nth-child(4) { animation-delay: 0.29s; }
+.hero-title span:nth-child(5) { animation-delay: 0.37s; }
+.hero-title span:nth-child(6) { animation-delay: 0.45s; }
+.hero-title span:nth-child(7) { animation-delay: 0.53s; }
+.hero-title span:nth-child(8) { animation-delay: 0.61s; }
+
+/* ── HERO CONTENT ENTRANCE ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInLeft {
+  from { opacity: 0; transform: translateX(-18px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.hero-eyebrow  { animation: fadeInLeft 0.55s ease both 0.65s; }
+.hero-tagline  { animation: fadeUp    0.55s ease both 0.85s; }
+.hero-actions  { animation: fadeUp    0.55s ease both 1.05s; }
+.hero-quick    { animation: fadeUp    0.55s ease both 1.25s; }
+
+/* ── HERO CARD FLOAT ── */
+@keyframes heroFloat {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-10px); }
+}
+.hero-right { animation: fadeUp 0.7s ease both 0.5s; }
+.hero-card  { animation: heroFloat 7s ease-in-out infinite 1.5s; }
+
+/* ── CTA PULSIERENDER GLOW ── */
+@keyframes ctaPulse {
+  0%, 100% { box-shadow: 0 2px 12px rgba(124,58,237,.35); }
+  50%       { box-shadow: 0 6px 40px rgba(124,58,237,.75), 0 0 0 12px rgba(124,58,237,.07); }
+}
+.hero-actions .btn-primary {
+  animation: ctaPulse 2.8s ease-in-out infinite 1.5s;
+}
+
+/* ── SECTION TAG GLOW PULSE ── */
+@keyframes tagGlow {
+  0%, 100% { box-shadow: 0 2px 10px rgba(124,58,237,.28); }
+  50%       { box-shadow: 0 4px 22px rgba(236,72,153,.55); }
+}
+.section-tag { animation: tagGlow 4s ease-in-out infinite; }
+
+/* ── FOTO-BREAK OVERLAY BEWEGT SICH ── */
+@keyframes photoShift {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+.photo-break-overlay {
+  background: linear-gradient(
+    135deg,
+    rgba(124,58,237,.55) 0%,
+    rgba(236,72,153,.35) 50%,
+    rgba(124,58,237,.55) 100%
+  );
+  background-size: 200% 200%;
+  animation: photoShift 7s ease-in-out infinite alternate;
+}
+
+/* ── EVENT NUMBER HOVER GROW ── */
+.event-nr { transition: transform 0.25s cubic-bezier(.22,.68,0,1.4); }
+.event-item:hover .event-nr { transform: scale(1.18) translateX(3px); }
+
+/* ── RIPPLE EFFEKT ── */
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  width: 12px; height: 12px;
+  background: rgba(255,255,255,.3);
+  transform: scale(0);
+  animation: rippleAnim 0.65s ease-out forwards;
+  pointer-events: none;
+}
+@keyframes rippleAnim {
+  to { transform: scale(28); opacity: 0; }
+}
+
+/* ── REDUCED MOTION: ALLE NEUEN ANIMATIONEN AUS ── */
+@media (prefers-reduced-motion: reduce) {
+  .hero-title span,
+  .hero-eyebrow, .hero-tagline, .hero-actions, .hero-quick,
+  .hero-right, .hero-card,
+  .hero-actions .btn-primary,
+  .section-tag,
+  .photo-break-overlay { animation: none !important; }
+  .hero-actions .btn-primary { box-shadow: 0 2px 12px rgba(124,58,237,.35); }
+  .event-nr { transition: none !important; }
+  .section-header h2::after { transition: none !important; width: 36px !important; }
 }
