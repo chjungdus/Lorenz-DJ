@@ -18,16 +18,15 @@
       <div class="gate-logo">LORENZ</div>
       <h2>Admin-Zugang</h2>
       <p>Bitte gib das Admin-Passwort ein.</p>
-      <div class="gate-form">
+      <form class="gate-form" id="gate-form" autocomplete="off">
         <input
-          type="password"
+          type="text"
           id="gate-password"
           class="gate-input"
           placeholder="Passwort"
-          autocomplete="current-password"
         >
-        <button id="login-btn" class="btn btn-primary">Einloggen</button>
-      </div>
+        <button type="submit" class="btn btn-primary">Einloggen</button>
+      </form>
       <p class="gate-error" id="gate-error" role="alert"></p>
     </div>
   </div>

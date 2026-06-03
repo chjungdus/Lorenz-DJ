@@ -1149,7 +1149,7 @@ section { padding: 96px 0; }
   .fact-row { grid-template-columns: 100px 1fr; gap: 10px; padding: 12px 16px; }
 
   .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
-  .footer-admin { display: none; }
+  .footer-admin { color: rgba(255,255,255,.4) !important; }
 
   .section-header h2 { font-size: 1.6rem; }
   .section-tag { font-size: 0.62rem; }

@@ -35,10 +35,10 @@ function logout() {
   location.reload();
 }
 
-// Events binden
-document.getElementById('login-btn').addEventListener('click', checkPassword);
-document.getElementById('gate-password').addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') checkPassword();
+// Events binden – Form-Submit ist am zuverlässigsten (Enter + Button)
+document.getElementById('gate-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  checkPassword();
 });
 
 const logoutBtn = document.getElementById('logout-btn');

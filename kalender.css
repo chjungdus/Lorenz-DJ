@@ -101,10 +101,14 @@ body {
 .gate-error {
   margin-top: 12px;
   color: #DC2626;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 600;
-  min-height: 18px;
+  background: #FEF2F2;
+  border-left: 3px solid #DC2626;
+  padding: 8px 12px;
+  display: none;
 }
+.gate-error:not(:empty) { display: block; }
 
 /* ── HEADER ── */
 

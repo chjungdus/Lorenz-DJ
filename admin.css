@@ -55,10 +55,16 @@
 
 .gate-error {
   color: #DC2626;
-  font-size: 0.82rem;
-  margin-top: 8px;
-  min-height: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-top: 12px;
+  min-height: 22px;
+  background: #FEF2F2;
+  border-left: 3px solid #DC2626;
+  padding: 8px 12px;
+  display: none;
 }
+.gate-error:not(:empty) { display: block; }
 
 /* === ADMIN HEADER === */
 .admin-header {

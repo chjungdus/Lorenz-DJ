@@ -17,10 +17,10 @@
       <div class="gate-logo">L</div>
       <h1>Buchungs-Kalender</h1>
       <p>Nur für Lorenz</p>
-      <div class="gate-field">
-        <input type="password" id="gate-password" placeholder="Passwort eingeben" autocomplete="current-password">
-        <button class="gate-btn" id="cal-login-btn">Rein</button>
-      </div>
+      <form class="gate-field" id="cal-gate-form" autocomplete="off">
+        <input type="text" id="gate-password" placeholder="Passwort eingeben">
+        <button type="submit" class="gate-btn">Rein</button>
+      </form>
       <p id="gate-error" class="gate-error"></p>
     </div>
   </div>
@@ -33,7 +33,7 @@
           <div class="cal-logo">L</div>
           <span>Buchungs-Kalender</span>
         </div>
-        <button class="logout-btn" onclick="logout()">Logout</button>
+        <button class="logout-btn" id="cal-logout-btn">Logout</button>
       </div>
     </header>
 

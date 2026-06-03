@@ -39,10 +39,13 @@ function logout() {
   location.reload();
 }
 
-document.getElementById('cal-login-btn').addEventListener('click', checkPassword);
-document.getElementById('gate-password').addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') checkPassword();
+document.getElementById('cal-gate-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  checkPassword();
 });
+
+const calLogoutBtn = document.getElementById('cal-logout-btn');
+if (calLogoutBtn) calLogoutBtn.addEventListener('click', logout);
 
 if (sessionStorage.getItem('lorenz-cal') === '1') unlockCalendar();
 
