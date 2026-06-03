@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DJ Lorenz – Dein DJ für unvergessliche Events</title>
-  <meta name="description" content="DJ Lorenz – Hochzeiten, Geburtstage, Clubs und Corporate Events. Jetzt buchen!">
+  <title>DJ Lorenz – Dein DJ für jedes Event</title>
+  <meta name="description" content="DJ Lorenz – Buchung, Preise, Equipment und Anfahrt. Für Hochzeiten, Geburtstage, Clubs und Firmenfeiern.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -17,7 +17,10 @@
     <a href="#" class="nav-logo">LORENZ</a>
     <ul class="nav-links">
       <li><a href="#about">Über mich</a></li>
-      <li><a href="#services">Events</a></li>
+      <li><a href="#equipment">Equipment</a></li>
+      <li><a href="#preise">Preise</a></li>
+      <li><a href="#events">Events</a></li>
+      <li><a href="#anfahrt">Anfahrt</a></li>
       <li><a href="#booking">Buchen</a></li>
     </ul>
     <a href="#booking" class="btn btn-primary btn-sm">Jetzt Buchen</a>
@@ -27,107 +30,416 @@
   <section class="hero" id="hero">
     <div class="blob blob-1"></div>
     <div class="blob blob-2"></div>
-    <div class="blob blob-3"></div>
-    <div class="hero-content">
-      <p class="hero-eyebrow">DJ &middot; Events &middot; Vibes</p>
-      <h1 class="hero-title">LORENZ</h1>
-      <p class="hero-sub">
-        Dein DJ für unvergessliche Momente –<br>
-        von der Hochzeit bis zum Club.
-      </p>
-      <div class="hero-actions">
-        <a href="#booking" class="btn btn-primary">Jetzt Buchen</a>
-        <a href="#services" class="btn btn-outline">Mehr erfahren</a>
+    <div class="container hero-inner">
+      <div class="hero-left">
+        <p class="hero-eyebrow">DJ &middot; Events &middot; Musik</p>
+        <h1 class="hero-title">LORENZ</h1>
+        <p class="hero-tagline">
+          Dein DJ für Hochzeiten, Geburtstage,<br>
+          Clubs und Firmenfeiern.
+        </p>
+        <div class="hero-actions">
+          <a href="#booking" class="btn btn-primary">Jetzt Buchen</a>
+          <a href="#preise" class="btn btn-outline">Preise ansehen</a>
+        </div>
+        <div class="hero-quick">
+          <div class="quick-item">
+            <span class="quick-label">Standort</span>
+            <span>Musterstadt &amp; Umgebung</span>
+          </div>
+          <div class="quick-item">
+            <span class="quick-label">Telefon</span>
+            <a href="tel:+49123456789">+49 123 456789</a>
+          </div>
+          <div class="quick-item">
+            <span class="quick-label">Antwort</span>
+            <span>innerhalb 24h</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-right">
+        <div class="hero-card">
+          <div class="hc-row">
+            <span class="hc-label">Events gespielt</span>
+            <span class="hc-val">200+</span>
+          </div>
+          <div class="hc-divider"></div>
+          <div class="hc-row">
+            <span class="hc-label">Jahre Erfahrung</span>
+            <span class="hc-val">5+</span>
+          </div>
+          <div class="hc-divider"></div>
+          <div class="hc-row">
+            <span class="hc-label">Reichweite</span>
+            <span class="hc-val">bis 200 km</span>
+          </div>
+          <div class="hc-divider"></div>
+          <div class="hc-row">
+            <span class="hc-label">Nächste Buchung</span>
+            <span class="hc-val">auf Anfrage</span>
+          </div>
+          <a href="#booking" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:28px">
+            Datum anfragen
+          </a>
+        </div>
       </div>
     </div>
-    <div
-      class="scroll-indicator"
-      onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'})"
-      aria-label="Nach unten scrollen"
-    >↓</div>
   </section>
 
-  <!-- ── ABOUT ── -->
+  <!-- ── ÜBER MICH ── -->
   <section class="about" id="about">
     <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Über mich</span>
+        <h2>Wer steckt hinter den Decks?</h2>
+      </div>
       <div class="about-grid">
         <div class="about-text">
-          <span class="section-tag">Über mich</span>
-          <h2 class="section-title">Musik, die verbindet.</h2>
-          <p>
-            Ich bin Lorenz – DJ aus Leidenschaft. Mit über 5 Jahren Erfahrung
-            auf Hochzeiten, Geburtstagen, Firmenevents und Clubs weiß ich, wie
-            man jeden Raum zum Kochen bringt. Mein Ziel ist einfach: dass jeder
-            Gast am Ende sagt – <em>das war eine geile Party.</em>
+          <p class="about-lead">
+            Ich bin Lorenz – DJ aus Musterstadt mit über 5 Jahren Erfahrung auf den
+            unterschiedlichsten Events. Angefangen in kleinen Clubs, buche ich heute
+            Hochzeiten, Firmenfeiern, Geburtstagsfeiern und Open-Air-Auftritte in der ganzen Region.
           </p>
-          <div class="stats">
-            <div class="stat">
-              <span class="stat-num">200+</span>
-              <span class="stat-label">Events</span>
-            </div>
-            <div class="stat">
-              <span class="stat-num">5+</span>
-              <span class="stat-label">Jahre</span>
-            </div>
-            <div class="stat">
-              <span class="stat-num">100%</span>
-              <span class="stat-label">Herzblut</span>
-            </div>
-          </div>
+          <p>
+            Musik ist für mich keine Arbeit – es ist das was mich antreibt. Ich nehme mir Zeit,
+            jeden Auftritt individuell vorzubereiten: Welche Musik passt zur Stimmung? Was
+            wünschen sich die Gäste? Wie baue ich den Abend so auf, dass die Tanzfläche nie leer bleibt?
+          </p>
+          <p>
+            Ob House, Hip-Hop, R&amp;B, Chart-Hits oder Klassiker aus den 80ern und 90ern –
+            ich passe mein Set dem Publikum an, nicht andersherum. Musikwünsche sind immer willkommen.
+          </p>
         </div>
-        <div class="about-visual">
-          <div class="visual-card">
-            <div class="visual-card-inner">♪</div>
+        <div class="about-facts">
+          <div class="fact-row">
+            <span class="fact-key">Standort</span>
+            <span class="fact-val">Musterstadt &amp; bis 200 km Umgebung</span>
+          </div>
+          <div class="fact-row">
+            <span class="fact-key">Genres</span>
+            <span class="fact-val">House, Hip-Hop, R&amp;B, Charts, 80s/90s, Schlager</span>
+          </div>
+          <div class="fact-row">
+            <span class="fact-key">Sprachen</span>
+            <span class="fact-val">Deutsch, Englisch</span>
+          </div>
+          <div class="fact-row">
+            <span class="fact-key">Buchungsweg</span>
+            <span class="fact-val">Formular unten oder direkt per Telefon</span>
+          </div>
+          <div class="fact-row">
+            <span class="fact-key">Anzahlung</span>
+            <span class="fact-val">20 % bei Auftragsbestätigung</span>
+          </div>
+          <div class="fact-row">
+            <span class="fact-key">Stornierung</span>
+            <span class="fact-val">Bis 4 Wochen vorher kostenfrei</span>
+          </div>
+          <div class="fact-row">
+            <span class="fact-key">Probe-Set</span>
+            <span class="fact-val">Auf Anfrage möglich (begrenzt)</span>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ── SERVICES ── -->
-  <section class="services" id="services">
+  <!-- ── EQUIPMENT & TECHNIK ── -->
+  <section class="equipment" id="equipment">
     <div class="container">
-      <span class="section-tag center">Was ich biete</span>
-      <h2 class="section-title center">Events &amp; Anlässe</h2>
-      <div class="services-grid">
+      <div class="section-header">
+        <span class="section-tag">Technik</span>
+        <h2>Equipment &amp; Technik</h2>
+        <p class="section-sub">
+          Professionelles Equipment ist kein Bonus – es ist die Grundlage für einen guten Auftritt.
+          Alles was ich mitbringe ist gepflegte, gewartete Profi-Hardware. Auf- und Abbau sind immer inklusive.
+        </p>
+      </div>
+      <div class="equipment-grid">
+        <div class="equip-card">
+          <div class="equip-icon">🎛️</div>
+          <h3>DJ-Controller</h3>
+          <p>Pioneer DDJ-1000<br>4-Kanal, professionell</p>
+        </div>
+        <div class="equip-card">
+          <div class="equip-icon">🔊</div>
+          <h3>Lautsprecher</h3>
+          <p>2× RCF Art 745-A<br>je 1.400 W, aktiv</p>
+        </div>
+        <div class="equip-card">
+          <div class="equip-icon">💥</div>
+          <h3>Subwoofer</h3>
+          <p>RCF Sub 705-AS II<br>1.000 W (zubuchbar)</p>
+        </div>
+        <div class="equip-card">
+          <div class="equip-icon">💡</div>
+          <h3>Lichtanlage</h3>
+          <p>Moving Heads, LED-Bar<br>Laser &amp; Stroboskop</p>
+        </div>
+        <div class="equip-card">
+          <div class="equip-icon">🎤</div>
+          <h3>Mikrofon</h3>
+          <p>Shure SM58 Funk<br>Ansagen &amp; Moderation</p>
+        </div>
+        <div class="equip-card">
+          <div class="equip-icon">💻</div>
+          <h3>Software</h3>
+          <p>Serato DJ Pro<br>Rekordbox-kompatibel</p>
+        </div>
+      </div>
+      <p class="equip-note">
+        * Für Events ab 500 Personen oder Open-Air ist eine größere Anlage nötig – auf Anfrage buchbar.
+      </p>
+    </div>
+  </section>
 
-        <div class="service-card">
-          <span class="service-icon">💍</span>
-          <h3>Hochzeiten</h3>
-          <p>Euer perfekter Soundtrack für den schönsten Tag – von der Trauung bis zum letzten Tanz.</p>
+  <!-- ── PREISE ── -->
+  <section class="preise" id="preise">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Pakete</span>
+        <h2>Preise &amp; Pakete</h2>
+        <p class="section-sub">
+          Transparente Preise ohne versteckte Kosten.
+          Fahrtkosten ab 50 km: 0,35 €/km. Kleinunternehmerregelung (§ 19 UStG) – keine MwSt.
+        </p>
+      </div>
+      <div class="preise-grid">
+
+        <div class="preis-card">
+          <div class="preis-head">
+            <h3>Small Event</h3>
+            <div class="preis-val">ab 299 €</div>
+          </div>
+          <div class="preis-desc">Ideal für kleine Feiern und private Partys bis ca. 100 Personen.</div>
+          <ul class="preis-list">
+            <li>Bis 4 Stunden</li>
+            <li>Bis ~100 Personen</li>
+            <li>DJ-Anlage inklusive</li>
+            <li>Musikwünsche möglich</li>
+            <li>Auf- &amp; Abbau inklusive</li>
+          </ul>
+          <a href="#booking" class="btn btn-outline" style="width:100%;justify-content:center;">Anfragen</a>
         </div>
 
-        <div class="service-card">
-          <span class="service-icon">🎂</span>
-          <h3>Geburtstage</h3>
-          <p>Partys, die man so schnell nicht vergisst. Ich bring die Musik, du bringst die Leute.</p>
+        <div class="preis-card preis-highlight">
+          <div class="preis-badge">Beliebt</div>
+          <div class="preis-head">
+            <h3>Standard</h3>
+            <div class="preis-val">ab 499 €</div>
+          </div>
+          <div class="preis-desc">Perfekt für Geburtstage, Betriebsfeiern und mittlere Events.</div>
+          <ul class="preis-list">
+            <li>Bis 6 Stunden</li>
+            <li>Bis ~300 Personen</li>
+            <li>DJ-Anlage + Subwoofer</li>
+            <li>Basis-Lichtanlage</li>
+            <li>Musikwünsche inklusive</li>
+            <li>Vorgespräch inklusive</li>
+          </ul>
+          <a href="#booking" class="btn btn-primary" style="width:100%;justify-content:center;">Anfragen</a>
         </div>
 
-        <div class="service-card">
-          <span class="service-icon">🏢</span>
-          <h3>Corporate Events</h3>
-          <p>Professionelle Unterhaltung für Firmenfeiern, Teamevents und Produktpräsentationen.</p>
+        <div class="preis-card">
+          <div class="preis-head">
+            <h3>Premium</h3>
+            <div class="preis-val">ab 799 €</div>
+          </div>
+          <div class="preis-desc">Für große Events mit voller Technik und Lichtshow.</div>
+          <ul class="preis-list">
+            <li>Bis 8 Stunden</li>
+            <li>Unbegrenzte Personenzahl</li>
+            <li>Vollständige DJ-Anlage</li>
+            <li>Komplette Lichtshow</li>
+            <li>Playlist-Abstimmung</li>
+            <li>Vorgespräch vor Ort</li>
+          </ul>
+          <a href="#booking" class="btn btn-outline" style="width:100%;justify-content:center;">Anfragen</a>
         </div>
 
-        <div class="service-card">
-          <span class="service-icon">🎉</span>
-          <h3>Clubs &amp; Partys</h3>
-          <p>Energie pur auf der Tanzfläche. Von House über Hip-Hop bis Techno – ich kenn mein Publikum.</p>
-        </div>
+      </div>
 
+      <!-- Hochzeit Sonderpaket -->
+      <div class="preis-hochzeit">
+        <div class="preis-hochzeit-left">
+          <span class="section-tag">Sonderpaket</span>
+          <h3>Hochzeit</h3>
+          <div class="preis-val">Auf Anfrage</div>
+        </div>
+        <div class="preis-hochzeit-mid">
+          <ul class="preis-list">
+            <li>Ganztags möglich (bis 12h)</li>
+            <li>Individuelle Playlist-Planung</li>
+            <li>Mehrere persönliche Gespräche</li>
+          </ul>
+          <ul class="preis-list">
+            <li>Komplette Anlage &amp; Lichtshow</li>
+            <li>Moderations-Möglichkeit</li>
+            <li>Abstimmung auf Zeremonie &amp; Feier</li>
+          </ul>
+        </div>
+        <div class="preis-hochzeit-right">
+          <a href="#booking" class="btn btn-primary">Jetzt Anfragen</a>
+        </div>
+      </div>
+
+      <p class="preise-note">
+        Alle Preise sind Richtwerte. Der genaue Preis hängt von Dauer, Entfernung, Aufwand und
+        gebuchten Extras ab. Nach deiner Anfrage erhältst du ein individuelles Angebot.
+      </p>
+    </div>
+  </section>
+
+  <!-- ── EVENTS & ANLÄSSE ── -->
+  <section class="events" id="events">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Anlässe</span>
+        <h2>Für welche Events kann man buchen?</h2>
+      </div>
+      <div class="events-grid">
+        <div class="event-item">
+          <span class="event-nr">01</span>
+          <div class="event-body">
+            <h3>Hochzeiten</h3>
+            <p>Von der Trauungsmusik bis zum letzten Tanz. Ich stimme die Playlist auf deine
+            Vorstellungen ab – klassisch, modern oder alles gemischt. Gerne übernehme ich auch
+            die Moderation und Ansagen.</p>
+          </div>
+        </div>
+        <div class="event-item">
+          <span class="event-nr">02</span>
+          <div class="event-body">
+            <h3>Geburtstage &amp; Jubiläen</h3>
+            <p>Private Partys bei denen man sich unvergessliche Nächte erwartet. Ob runder
+            Geburtstag, Silberhochzeit oder Firmen-Jubiläum – ich sorge dafür, dass die
+            Stimmung stimmt.</p>
+          </div>
+        </div>
+        <div class="event-item">
+          <span class="event-nr">03</span>
+          <div class="event-body">
+            <h3>Firmen- &amp; Teamevents</h3>
+            <p>Weihnachtsfeiern, Sommerfeste, Produkteinführungen. Professionell, pünktlich,
+            zuverlässig. Ich bringe die Unterhaltung, ihr könnt euch entspannen.</p>
+          </div>
+        </div>
+        <div class="event-item">
+          <span class="event-nr">04</span>
+          <div class="event-body">
+            <h3>Clubnächte &amp; Partys</h3>
+            <p>Regelmäßige Sets im Club oder Einmal-Events. Ich kenne den Unterschied zwischen
+            einer Partygesellschaft und einem Clubpublikum – und spiele entsprechend.</p>
+          </div>
+        </div>
+        <div class="event-item">
+          <span class="event-nr">05</span>
+          <div class="event-body">
+            <h3>Abi-Partys &amp; Schulbälle</h3>
+            <p>Musikmix der Generationen: aktuelle Hits, Throwbacks und Wünsche der
+            Abschlussklasse. Erfahrung mit Schülerfeiern vorhanden.</p>
+          </div>
+        </div>
+        <div class="event-item">
+          <span class="event-nr">06</span>
+          <div class="event-body">
+            <h3>Stadtfeste &amp; Open Air</h3>
+            <p>Outdoor-Erfahrung vorhanden. Wetterfeste Anlage für Open-Air-Events auf Anfrage
+            buchbar. Stromversorgung muss vor Ort sichergestellt sein.</p>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- ── BOOKING ── -->
+  <!-- ── ANFAHRT ── -->
+  <section class="anfahrt" id="anfahrt">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Anfahrt</span>
+        <h2>Standort &amp; Reichweite</h2>
+        <p class="section-sub">
+          Ich bin in Musterstadt ansässig und fahre für Auftritte in der gesamten Region.
+          Fahrtkosten werden erst ab 50 km berechnet.
+        </p>
+      </div>
+      <div class="anfahrt-grid">
+        <div class="anfahrt-info">
+          <div class="anfahrt-block">
+            <h3>Adresse</h3>
+            <address>
+              DJ Lorenz<br>
+              Musterstraße 12<br>
+              12345 Musterstadt<br>
+              Deutschland
+            </address>
+          </div>
+          <div class="anfahrt-block">
+            <h3>Kontakt</h3>
+            <p>
+              <span class="contact-label">Telefon</span>
+              <a href="tel:+49123456789">+49 123 456789</a>
+            </p>
+            <p>
+              <span class="contact-label">E-Mail</span>
+              <a href="mailto:info@dj-lorenz.de">info@dj-lorenz.de</a>
+            </p>
+            <p>
+              <span class="contact-label">Erreichbar</span>
+              Mo–Sa, 10–20 Uhr
+            </p>
+          </div>
+          <div class="anfahrt-block">
+            <h3>Fahrtkosten</h3>
+            <div class="rw-table">
+              <div class="rw-row">
+                <span>Bis 50 km</span>
+                <span class="rw-badge rw-gratis">kostenlos</span>
+              </div>
+              <div class="rw-row">
+                <span>50 – 100 km</span>
+                <span class="rw-badge rw-kosten">ab 17,50 €</span>
+              </div>
+              <div class="rw-row">
+                <span>100 – 200 km</span>
+                <span class="rw-badge rw-kosten">ab 35 €</span>
+              </div>
+              <div class="rw-row">
+                <span>Über 200 km</span>
+                <span class="rw-badge rw-anfrage">auf Anfrage</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="anfahrt-map">
+          <!--
+            Google Maps Iframe hier einfügen:
+            1. Gehe zu maps.google.com
+            2. Suche deine Adresse
+            3. Klicke Teilen → Karte einbetten
+            4. Kopiere den <iframe>-Code und ersetze den map-placeholder div
+          -->
+          <div class="map-placeholder">
+            <p>🗺️</p>
+            <p><strong>Karte hier einbetten</strong></p>
+            <p>Google Maps → Teilen → Karte einbetten<br>Dann diesen Block durch das &lt;iframe&gt; ersetzen.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── BUCHUNG ── -->
   <section class="booking" id="booking">
     <div class="container">
-      <span class="section-tag center">Buchung</span>
-      <h2 class="section-title center">Lass uns was planen.</h2>
-      <p class="section-sub center">
-        Füll das Formular aus – ich meld mich innerhalb von 24&nbsp;Stunden bei dir.
-      </p>
-
+      <div class="section-header">
+        <span class="section-tag">Buchung</span>
+        <h2>Jetzt anfragen.</h2>
+        <p class="section-sub">
+          Füll das Formular aus – ich melde mich innerhalb von 24 Stunden.
+          Du erreichst mich auch direkt unter <a href="tel:+49123456789">+49 123 456789</a>.
+        </p>
+      </div>
       <form class="booking-form" id="booking-form" novalidate>
         <div class="form-grid">
           <div class="form-group">
@@ -155,8 +467,12 @@
             <input type="time" id="event_time" name="event_time" required>
           </div>
           <div class="form-group full">
-            <label for="message">Nachricht</label>
-            <textarea id="message" name="message" placeholder="Erzähl mir von deinem Event – was hast du dir vorgestellt?"></textarea>
+            <label for="message">Details zum Event</label>
+            <textarea
+              id="message"
+              name="message"
+              placeholder="Was für ein Event? Wo findet es statt? Hast du Musikwünsche, spezielle Anforderungen oder möchtest du ein bestimmtes Paket anfragen?"
+            ></textarea>
           </div>
         </div>
         <div class="form-submit">
@@ -172,15 +488,50 @@
   <!-- ── FOOTER ── -->
   <footer class="footer">
     <div class="container">
-      <div class="footer-inner">
-        <span class="footer-logo">LORENZ</span>
-        <p class="footer-copy">© 2024 DJ Lorenz. Alle Rechte vorbehalten.</p>
+      <div class="footer-top">
+        <div class="footer-brand">
+          <span class="footer-logo">LORENZ</span>
+          <p>DJ für Hochzeiten, Geburtstage,<br>Clubs und Firmenfeiern.</p>
+          <p class="footer-tagline">Musterstadt &amp; Umgebung bis 200 km.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="#about">Über mich</a></li>
+            <li><a href="#equipment">Equipment</a></li>
+            <li><a href="#preise">Preise</a></li>
+            <li><a href="#events">Events</a></li>
+            <li><a href="#anfahrt">Anfahrt</a></li>
+            <li><a href="#booking">Buchen</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Kontakt</h4>
+          <ul>
+            <li><a href="tel:+49123456789">+49 123 456789</a></li>
+            <li><a href="mailto:info@dj-lorenz.de">info@dj-lorenz.de</a></li>
+            <li>Musterstraße 12</li>
+            <li>12345 Musterstadt</li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Buchung</h4>
+          <ul>
+            <li><a href="#booking">Anfrage stellen</a></li>
+            <li><a href="#preise">Small Event – ab 299 €</a></li>
+            <li><a href="#preise">Standard – ab 499 €</a></li>
+            <li><a href="#preise">Premium – ab 799 €</a></li>
+            <li><a href="#preise">Hochzeit – auf Anfrage</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2024 DJ Lorenz. Alle Rechte vorbehalten. | <a href="#">Impressum</a> | <a href="#">Datenschutz</a></p>
         <a href="admin.html" class="footer-admin">Admin</a>
       </div>
     </div>
   </footer>
 
-  <!-- SCRIPTS -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
   <script src="booking.js"></script>
