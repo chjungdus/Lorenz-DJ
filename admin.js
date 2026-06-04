@@ -1,31 +1,32 @@
-// admin.js – Edmund Panel
+// admin.js – Edmund Panel (robust rewrite)
 
-let supabase;
+let supabase = null;
 let allBookings   = [];
-let allBlocked    = [];   // ['YYYY-MM-DD', ...]
-let currentYear, currentMonth;
+let allBlocked    = [];
 let selectedDate  = null;
 let currentFilter = 'all';
 
-// ── UNLOCK / LOGOUT ───────────────────────────────────────
+const now = new Date();
+let currentYear  = now.getFullYear();
+let currentMonth = now.getMonth();
+
+// ── INIT ─────────────────────────────────────────────────
 
 function unlockDashboard() {
   try {
     supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   } catch (e) {
     var err = document.getElementById('gate-error');
-    if (err) { err.textContent = 'Verbindungsfehler – Seite neu laden.'; err.style.display = 'block'; }
-    console.error(e);
+    if (err) { err.textContent = 'Verbindungsfehler: ' + e.message; err.style.display = 'block'; }
     return;
   }
+
   document.getElementById('admin-gate').style.display      = 'none';
   document.getElementById('admin-dashboard').style.display = 'block';
   sessionStorage.setItem('lorenz-admin', '1');
 
-  const now = new Date();
-  currentYear  = now.getFullYear();
-  currentMonth = now.getMonth();
-  loadAll();
+  renderCalendar(); // show calendar structure immediately
+  loadAll();        // then fill with data
 }
 
 function logout() {
@@ -33,77 +34,61 @@ function logout() {
   location.reload();
 }
 
-// Logout button
-var logoutBtn = document.getElementById('logout-btn');
-if (logoutBtn) logoutBtn.addEventListener('click', logout);
-
-// Tab switching
-document.getElementById('admin-tabs').addEventListener('click', function (e) {
-  var btn = e.target.closest('.tab-btn');
-  if (!btn) return;
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
-  document.getElementById('tab-' + btn.dataset.tab).classList.remove('hidden');
-});
-
-// Month navigation
-document.getElementById('prev-month').addEventListener('click', () => {
-  currentMonth--;
-  if (currentMonth < 0) { currentMonth = 11; currentYear--; }
-  renderCalendar();
-});
-document.getElementById('next-month').addEventListener('click', () => {
-  currentMonth++;
-  if (currentMonth > 11) { currentMonth = 0; currentYear++; }
-  renderCalendar();
-});
-
-// Filter buttons (list tab)
-document.getElementById('filter-bar').addEventListener('click', function (e) {
-  var btn = e.target.closest('.filter-btn');
-  if (!btn) return;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  currentFilter = btn.dataset.filter;
-  renderTable();
-});
-
-// Block/unblock button
-document.getElementById('block-btn').addEventListener('click', function () {
-  if (!selectedDate) return;
-  toggleBlockDate(selectedDate);
-});
-
-// Mobile backdrop
-document.getElementById('detail-backdrop').addEventListener('click', function () {
-  document.getElementById('day-detail').classList.remove('open');
-  this.classList.add('hidden');
-});
-
-// Session still active?
-if (sessionStorage.getItem('lorenz-admin') === '1') unlockDashboard();
+// Auto-unlock from session
+if (sessionStorage.getItem('lorenz-admin') === '1') {
+  window.addEventListener('load', function () {
+    unlockDashboard();
+  });
+}
 
 // ── DATEN LADEN ───────────────────────────────────────────
 
 async function loadAll() {
-  const [bRes, dRes] = await Promise.all([
-    supabase.from('bookings').select('*').order('event_date', { ascending: true }),
-    supabase.from('blocked_dates').select('date')
-  ]);
+  setStatus('Buchungen werden geladen …');
 
-  if (bRes.error) console.error('bookings:', bRes.error);
-  if (dRes.error) console.error('blocked_dates:', dRes.error);
+  // Bookings
+  try {
+    const bRes = await supabase
+      .from('bookings')
+      .select('*')
+      .order('event_date', { ascending: true });
 
-  allBookings = bRes.data || [];
-  allBlocked  = (dRes.data || []).map(r => r.date);
+    if (bRes.error) {
+      setStatus('Fehler beim Laden: ' + bRes.error.message, true);
+      console.error('bookings:', bRes.error);
+    } else {
+      allBookings = bRes.data || [];
+    }
+  } catch (e) {
+    setStatus('Netzwerkfehler: ' + e.message, true);
+    console.error(e);
+  }
 
+  // Blocked dates (separate query so booking errors don't block this)
+  try {
+    const dRes = await supabase.from('blocked_dates').select('date');
+    if (!dRes.error) {
+      allBlocked = (dRes.data || []).map(r => r.date);
+    }
+  } catch (e) {
+    console.error('blocked_dates:', e);
+  }
+
+  setStatus('');
   updateStats();
   renderCalendar();
   renderTable();
 }
 
-// ── STATISTIKEN ───────────────────────────────────────────
+function setStatus(msg, isError) {
+  var el = document.getElementById('admin-status');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.display = msg ? 'block' : 'none';
+  el.style.color = isError ? '#F87171' : 'var(--text-muted)';
+}
+
+// ── STATS ─────────────────────────────────────────────────
 
 function updateStats() {
   document.getElementById('stat-total').textContent     = allBookings.length;
@@ -112,70 +97,90 @@ function updateStats() {
   document.getElementById('stat-cancelled').textContent = allBookings.filter(b => b.status === 'cancelled').length;
 }
 
-// ── KALENDER RENDERN ──────────────────────────────────────
+// ── TABS ──────────────────────────────────────────────────
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+  document.querySelector('[data-tab="' + tab + '"]').classList.add('active');
+  document.getElementById('tab-' + tab).classList.remove('hidden');
+}
+
+// ── KALENDER ──────────────────────────────────────────────
+
+function prevMonth() {
+  currentMonth--;
+  if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+  renderCalendar();
+}
+
+function nextMonth() {
+  currentMonth++;
+  if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+  renderCalendar();
+}
 
 function renderCalendar() {
-  const grid  = document.getElementById('admin-cal-grid');
-  const label = document.getElementById('month-label');
+  var grid  = document.getElementById('admin-cal-grid');
+  var label = document.getElementById('month-label');
+  if (!grid || !label) return;
 
-  const monthNames = ['Januar','Februar','März','April','Mai','Juni',
-                      'Juli','August','September','Oktober','November','Dezember'];
-  label.textContent = `${monthNames[currentMonth]} ${currentYear}`;
+  var monthNames = ['Januar','Februar','März','April','Mai','Juni',
+                    'Juli','August','September','Oktober','November','Dezember'];
+  label.textContent = monthNames[currentMonth] + ' ' + currentYear;
 
-  const firstDay   = new Date(currentYear, currentMonth, 1);
-  let startOffset  = firstDay.getDay() - 1;
-  if (startOffset < 0) startOffset = 6;
+  var firstDay   = new Date(currentYear, currentMonth, 1);
+  var startOffset = (firstDay.getDay() + 6) % 7; // Monday = 0
+  var daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+  var today        = new Date();
 
-  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-  const today       = new Date();
-
-  const bookingMap = {};
-  allBookings.forEach(b => {
+  var bookingMap = {};
+  allBookings.forEach(function(b) {
     if (!bookingMap[b.event_date]) bookingMap[b.event_date] = [];
     bookingMap[b.event_date].push(b);
   });
 
-  grid.innerHTML = '';
+  var html = '';
 
-  for (let i = 0; i < startOffset; i++) {
-    grid.insertAdjacentHTML('beforeend', '<div class="cal-cell empty"></div>');
+  // Empty cells
+  for (var i = 0; i < startOffset; i++) {
+    html += '<div class="cal-cell empty"></div>';
   }
 
-  for (let d = 1; d <= daysInMonth; d++) {
-    const mm      = String(currentMonth + 1).padStart(2, '0');
-    const dd      = String(d).padStart(2, '0');
-    const dateStr = `${currentYear}-${mm}-${dd}`;
-    const dayBk   = bookingMap[dateStr] || [];
-    const isBlocked  = allBlocked.includes(dateStr);
-    const isToday    = today.getFullYear() === currentYear &&
-                       today.getMonth()    === currentMonth &&
-                       today.getDate()     === d;
-    const weekday   = new Date(currentYear, currentMonth, d).getDay();
-    const isWeekend = weekday === 0 || weekday === 6;
-    const isSelected = dateStr === selectedDate;
+  // Day cells
+  for (var d = 1; d <= daysInMonth; d++) {
+    var mm = (currentMonth + 1 < 10 ? '0' : '') + (currentMonth + 1);
+    var dd = (d < 10 ? '0' : '') + d;
+    var dateStr = currentYear + '-' + mm + '-' + dd;
+    var dayBk   = bookingMap[dateStr] || [];
+    var blocked  = allBlocked.indexOf(dateStr) !== -1;
+    var isToday  = today.getFullYear() === currentYear && today.getMonth() === currentMonth && today.getDate() === d;
+    var weekday  = new Date(currentYear, currentMonth, d).getDay();
+    var weekend  = weekday === 0 || weekday === 6;
+    var selected = dateStr === selectedDate;
 
-    const dotsHtml = dayBk.slice(0, 3).map(b =>
-      `<span class="dot dot-${b.status}"></span>`
-    ).join('');
-    const extraCount = dayBk.length > 3
-      ? `<span class="dot-extra">+${dayBk.length - 3}</span>`
-      : '';
+    var cls = 'cal-cell';
+    if (isToday)  cls += ' today';
+    if (weekend)  cls += ' weekend';
+    if (blocked)  cls += ' blocked';
+    if (selected) cls += ' selected';
 
-    const cell = document.createElement('div');
-    cell.className = 'cal-cell' +
-      (isToday    ? ' today'    : '') +
-      (isWeekend  ? ' weekend'  : '') +
-      (isBlocked  ? ' blocked'  : '') +
-      (isSelected ? ' selected' : '');
+    var inner = '<span class="day-num">' + d + '</span>';
+    if (blocked) {
+      inner += '<span class="blocked-x">✕</span>';
+    } else if (dayBk.length > 0) {
+      var dots = '';
+      dayBk.slice(0, 3).forEach(function(b) {
+        dots += '<span class="dot dot-' + b.status + '"></span>';
+      });
+      if (dayBk.length > 3) dots += '<span class="dot-extra">+' + (dayBk.length - 3) + '</span>';
+      inner += '<div class="dot-row">' + dots + '</div>';
+    }
 
-    cell.innerHTML = `<span class="day-num">${d}</span>` +
-      (isBlocked
-        ? '<span class="blocked-x">✕</span>'
-        : `<div class="dot-row">${dotsHtml}${extraCount}</div>`);
-
-    cell.addEventListener('click', () => selectDay(dateStr));
-    grid.appendChild(cell);
+    html += '<div class="' + cls + '" onclick="selectDay(\'' + dateStr + '\')">' + inner + '</div>';
   }
+
+  grid.innerHTML = html;
 }
 
 // ── TAG AUSWÄHLEN ─────────────────────────────────────────
@@ -184,144 +189,143 @@ function selectDay(dateStr) {
   selectedDate = dateStr;
   renderCalendar();
 
-  const [y, m, d] = dateStr.split('-');
-  document.getElementById('detail-date-heading').textContent = `${d}.${m}.${y}`;
+  var parts = dateStr.split('-');
+  document.getElementById('detail-date-heading').textContent = parts[2] + '.' + parts[1] + '.' + parts[0];
 
-  const isBlocked = allBlocked.includes(dateStr);
-  const blockBtn  = document.getElementById('block-btn');
-  blockBtn.style.display  = '';
-  blockBtn.textContent    = isBlocked ? '🔓 Freigeben' : '🔒 Sperren';
-  blockBtn.classList.toggle('is-blocked', isBlocked);
+  var blocked = allBlocked.indexOf(dateStr) !== -1;
+  var btn = document.getElementById('block-btn');
+  btn.style.display = '';
+  btn.textContent   = blocked ? '🔓 Freigeben' : '🔒 Sperren';
+  btn.className     = 'block-btn' + (blocked ? ' is-blocked' : '');
 
   renderDayDetail(dateStr);
 
-  // Mobile: open sliding panel
+  // Mobile: slide up
   document.getElementById('day-detail').classList.add('open');
   document.getElementById('detail-backdrop').classList.remove('hidden');
+}
+
+function closeDetail() {
+  document.getElementById('day-detail').classList.remove('open');
+  document.getElementById('detail-backdrop').classList.add('hidden');
 }
 
 // ── DAY DETAIL ────────────────────────────────────────────
 
 function renderDayDetail(dateStr) {
-  const body      = document.getElementById('day-detail-body');
-  const dayBk     = allBookings.filter(b => b.event_date === dateStr);
-  const isBlocked = allBlocked.includes(dateStr);
+  var body   = document.getElementById('day-detail-body');
+  var dayBk  = allBookings.filter(function(b) { return b.event_date === dateStr; });
+  var blocked = allBlocked.indexOf(dateStr) !== -1;
 
-  if (isBlocked && dayBk.length === 0) {
-    body.innerHTML = '<div class="blocked-notice">🔒 Dieser Tag ist gesperrt – keine Buchungen.</div>';
+  if (blocked && dayBk.length === 0) {
+    body.innerHTML = '<div class="blocked-notice">🔒 Dieser Tag ist gesperrt.</div>';
     return;
   }
-
   if (dayBk.length === 0) {
     body.innerHTML = '<p class="detail-hint">Keine Buchungen für diesen Tag.</p>';
     return;
   }
 
-  body.innerHTML = dayBk.map(b => `
-    <div class="booking-card status-left-${b.status}" id="card-${b.id}">
-      <div class="booking-card-top">
-        <div>
-          <div class="booking-name">${esc(b.name)}</div>
-          <span class="status-badge status-${b.status}">${statusLabel(b.status)}</span>
-        </div>
-        <span class="booking-price">${estimatePrice(b.guest_count)}</span>
-      </div>
-      <div class="booking-info">
-        <div class="booking-info-item">
-          <label>Uhrzeit</label>
-          <span>${b.event_time ? b.event_time.slice(0,5) + (b.event_time_end ? ' – ' + b.event_time_end.slice(0,5) : '') : '–'}</span>
-        </div>
-        <div class="booking-info-item">
-          <label>Personen</label>
-          <span>${b.guest_count}</span>
-        </div>
-        <div class="booking-info-item">
-          <label>E-Mail</label>
-          <span><a href="mailto:${esc(b.email)}">${esc(b.email)}</a></span>
-        </div>
-        <div class="booking-info-item">
-          <label>Telefon</label>
-          <span><a href="tel:${esc(b.phone)}">${esc(b.phone)}</a></span>
-        </div>
-        ${b.event_location ? `
-        <div class="booking-info-item span-2">
-          <label>Veranstaltungsort</label>
-          <span>${esc(b.event_location)}</span>
-        </div>` : ''}
-      </div>
-      ${b.message ? `<div class="booking-msg">"${esc(b.message)}"</div>` : ''}
-      <div class="booking-actions">
-        <button class="action-btn btn-confirm" onclick="updateBookingStatus('${b.id}','confirmed')" ${b.status==='confirmed'?'disabled':''}>✓ Bestätigen</button>
-        <button class="action-btn btn-reject"  onclick="updateBookingStatus('${b.id}','cancelled')" ${b.status==='cancelled'?'disabled':''}>✕ Ablehnen</button>
-        <button class="action-btn btn-reset"   onclick="updateBookingStatus('${b.id}','pending')"   ${b.status==='pending'?'disabled':''}>↺ Zurücksetzen</button>
-      </div>
-    </div>
-  `).join('');
+  body.innerHTML = dayBk.map(function(b) {
+    return '<div class="booking-card status-left-' + b.status + '">' +
+      '<div class="booking-card-top">' +
+        '<div>' +
+          '<div class="booking-name">' + esc(b.name) + '</div>' +
+          '<span class="status-badge status-' + b.status + '">' + statusLabel(b.status) + '</span>' +
+        '</div>' +
+        '<span class="booking-price">' + estimatePrice(b.guest_count) + '</span>' +
+      '</div>' +
+      '<div class="booking-info">' +
+        '<div class="booking-info-item">' +
+          '<label>Uhrzeit</label>' +
+          '<span>' + (b.event_time ? b.event_time.slice(0,5) + (b.event_time_end ? ' – ' + b.event_time_end.slice(0,5) : '') : '–') + '</span>' +
+        '</div>' +
+        '<div class="booking-info-item">' +
+          '<label>Personen</label><span>' + b.guest_count + '</span>' +
+        '</div>' +
+        '<div class="booking-info-item">' +
+          '<label>E-Mail</label><span><a href="mailto:' + esc(b.email) + '">' + esc(b.email) + '</a></span>' +
+        '</div>' +
+        '<div class="booking-info-item">' +
+          '<label>Telefon</label><span><a href="tel:' + esc(b.phone) + '">' + esc(b.phone) + '</a></span>' +
+        '</div>' +
+        (b.event_location ? '<div class="booking-info-item span-2"><label>Veranstaltungsort</label><span>' + esc(b.event_location) + '</span></div>' : '') +
+      '</div>' +
+      (b.message ? '<div class="booking-msg">"' + esc(b.message) + '"</div>' : '') +
+      '<div class="booking-actions">' +
+        '<button class="action-btn btn-confirm" onclick="updateBookingStatus(\'' + b.id + '\',\'confirmed\')" ' + (b.status === 'confirmed' ? 'disabled' : '') + '>✓ Bestätigen</button>' +
+        '<button class="action-btn btn-reject"  onclick="updateBookingStatus(\'' + b.id + '\',\'cancelled\')" ' + (b.status === 'cancelled' ? 'disabled' : '') + '>✕ Ablehnen</button>' +
+        '<button class="action-btn btn-reset"   onclick="updateBookingStatus(\'' + b.id + '\',\'pending\')"   ' + (b.status === 'pending'   ? 'disabled' : '') + '>↺ Zurücksetzen</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
 }
 
 // ── STATUS ÄNDERN ─────────────────────────────────────────
 
 async function updateBookingStatus(id, newStatus) {
-  const { error } = await supabase
-    .from('bookings')
-    .update({ status: newStatus })
-    .eq('id', id);
-
-  if (error) { console.error(error); return; }
-
-  const b = allBookings.find(b => b.id === id);
-  if (b) b.status = newStatus;
-
+  var res = await supabase.from('bookings').update({ status: newStatus }).eq('id', id);
+  if (res.error) { console.error(res.error); return; }
+  allBookings.forEach(function(b) { if (b.id === id) b.status = newStatus; });
   updateStats();
   renderCalendar();
   if (selectedDate) renderDayDetail(selectedDate);
   renderTable();
 }
 
-// ── TAG SPERREN / FREIGEBEN ───────────────────────────────
+// ── TAG SPERREN ───────────────────────────────────────────
+
+function toggleBlock() {
+  if (!selectedDate) return;
+  toggleBlockDate(selectedDate);
+}
 
 async function toggleBlockDate(dateStr) {
-  const isBlocked = allBlocked.includes(dateStr);
-
-  if (isBlocked) {
-    const { error } = await supabase.from('blocked_dates').delete().eq('date', dateStr);
-    if (error) { console.error(error); return; }
-    allBlocked = allBlocked.filter(d => d !== dateStr);
+  var blocked = allBlocked.indexOf(dateStr) !== -1;
+  if (blocked) {
+    var r = await supabase.from('blocked_dates').delete().eq('date', dateStr);
+    if (r.error) { console.error(r.error); return; }
+    allBlocked = allBlocked.filter(function(d) { return d !== dateStr; });
   } else {
-    const { error } = await supabase.from('blocked_dates').insert([{ date: dateStr }]);
-    if (error) { console.error(error); return; }
+    var r2 = await supabase.from('blocked_dates').insert([{ date: dateStr }]);
+    if (r2.error) { console.error(r2.error); return; }
     allBlocked.push(dateStr);
   }
-
+  var nowBlocked = allBlocked.indexOf(dateStr) !== -1;
+  var btn = document.getElementById('block-btn');
+  btn.textContent = nowBlocked ? '🔓 Freigeben' : '🔒 Sperren';
+  btn.className   = 'block-btn' + (nowBlocked ? ' is-blocked' : '');
   renderCalendar();
-  if (selectedDate === dateStr) {
-    const nowBlocked = allBlocked.includes(dateStr);
-    const blockBtn   = document.getElementById('block-btn');
-    blockBtn.textContent = nowBlocked ? '🔓 Freigeben' : '🔒 Sperren';
-    blockBtn.classList.toggle('is-blocked', nowBlocked);
-    renderDayDetail(dateStr);
-  }
+  if (selectedDate === dateStr) renderDayDetail(dateStr);
 }
 
 // ── PREISSCHÄTZUNG ────────────────────────────────────────
 
 function estimatePrice(n) {
-  if (!n) return '–';
+  n = parseInt(n, 10);
+  if (!n)    return '–';
   if (n <= 30)  return '~150–200 €';
   if (n <= 80)  return '~200–350 €';
   if (n <= 150) return '~350–500 €';
   return '500+ €';
 }
 
-// ── TABELLE RENDERN ───────────────────────────────────────
+// ── TABELLE ───────────────────────────────────────────────
+
+function filterTable(filter) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(function(b) {
+    b.classList.toggle('active', b.dataset.filter === filter);
+  });
+  renderTable();
+}
 
 function renderTable() {
-  const rows  = currentFilter === 'all' ? allBookings : allBookings.filter(b => b.status === currentFilter);
-  const tbody = document.getElementById('bookings-body');
-  const table = document.getElementById('bookings-table');
-  const empty = document.getElementById('admin-empty');
-  const loading = document.getElementById('admin-loading');
-
+  var rows  = currentFilter === 'all' ? allBookings : allBookings.filter(function(b) { return b.status === currentFilter; });
+  var tbody = document.getElementById('bookings-body');
+  var table = document.getElementById('bookings-table');
+  var empty = document.getElementById('admin-empty');
+  var loading = document.getElementById('admin-loading');
   if (loading) loading.style.display = 'none';
 
   if (rows.length === 0) {
@@ -329,45 +333,44 @@ function renderTable() {
     empty.style.display = 'block';
     return;
   }
-
-  table.style.display = 'table';
+  table.style.display = '';
   empty.style.display = 'none';
 
-  tbody.innerHTML = rows.map(b => `
-    <tr>
-      <td class="td-date">${formatDate(b.event_date)}</td>
-      <td class="td-name">${esc(b.name)}</td>
-      <td><a href="mailto:${esc(b.email)}">${esc(b.email)}</a></td>
-      <td><a href="tel:${esc(b.phone)}">${esc(b.phone)}</a></td>
-      <td>${b.event_time ? b.event_time.slice(0,5) + (b.event_time_end ? ' – ' + b.event_time_end.slice(0,5) : '') : '–'}</td>
-      <td class="td-center">${b.guest_count}</td>
-      <td>${b.event_location ? esc(b.event_location) : '<span class="muted">–</span>'}</td>
-      <td class="td-msg" title="${b.message ? esc(b.message) : ''}">${b.message ? esc(b.message) : '<span class="muted">–</span>'}</td>
-      <td><span class="status-badge status-${esc(b.status)}">${statusLabel(b.status)}</span></td>
-      <td class="td-date">${formatDateTime(b.created_at)}</td>
-    </tr>
-  `).join('');
+  tbody.innerHTML = rows.map(function(b) {
+    return '<tr>' +
+      '<td class="td-date">' + formatDate(b.event_date) + '</td>' +
+      '<td class="td-name">' + esc(b.name) + '</td>' +
+      '<td><a href="mailto:' + esc(b.email) + '">' + esc(b.email) + '</a></td>' +
+      '<td><a href="tel:' + esc(b.phone) + '">' + esc(b.phone) + '</a></td>' +
+      '<td>' + (b.event_time ? b.event_time.slice(0,5) + (b.event_time_end ? ' – ' + b.event_time_end.slice(0,5) : '') : '–') + '</td>' +
+      '<td class="td-center">' + b.guest_count + '</td>' +
+      '<td>' + (b.event_location ? esc(b.event_location) : '<span class="muted">–</span>') + '</td>' +
+      '<td class="td-msg" title="' + (b.message ? esc(b.message) : '') + '">' + (b.message ? esc(b.message) : '<span class="muted">–</span>') + '</td>' +
+      '<td><span class="status-badge status-' + esc(b.status) + '">' + statusLabel(b.status) + '</span></td>' +
+      '<td class="td-date">' + formatDateTime(b.created_at) + '</td>' +
+    '</tr>';
+  }).join('');
 }
 
 // ── HILFSFUNKTIONEN ───────────────────────────────────────
 
 function formatDate(str) {
   if (!str) return '–';
-  const [y, m, d] = str.split('-');
-  return `${d}.${m}.${y}`;
+  var p = str.split('-');
+  return p[2] + '.' + p[1] + '.' + p[0];
 }
 
 function formatDateTime(str) {
   if (!str) return '–';
-  return new Date(str).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  return new Date(str).toLocaleDateString('de-DE');
 }
 
 function statusLabel(s) {
-  return { pending: 'Ausstehend', confirmed: 'Bestätigt', cancelled: 'Abgelehnt' }[s] ?? s;
+  return ({ pending: 'Ausstehend', confirmed: 'Bestätigt', cancelled: 'Abgelehnt' })[s] || s;
 }
 
 function esc(str) {
   return String(str)
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }

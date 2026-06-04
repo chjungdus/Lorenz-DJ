@@ -20,40 +20,36 @@
       <p>Bitte gib das Admin-Passwort ein.</p>
       <div class="gate-form">
         <input type="text" id="gate-password" class="gate-input" placeholder="Passwort" autofocus>
-        <button type="button" id="login-btn" class="btn btn-primary">Einloggen</button>
+        <button type="button" onclick="doLogin()" class="btn btn-primary">Einloggen</button>
       </div>
-      <p id="gate-error" style="display:none;color:#DC2626;font-weight:700;padding:10px 14px;background:#FEF2F2;border-left:3px solid #DC2626;margin-top:14px;font-size:0.875rem;"></p>
+      <p id="gate-error" style="display:none;color:#F87171;font-weight:700;padding:10px 14px;background:rgba(239,68,68,0.1);border-left:3px solid #EF4444;margin-top:14px;font-size:0.875rem;border-radius:4px;"></p>
     </div>
   </div>
 
-  <!-- Inline Login-Logik – unabhängig von externen Skripten -->
   <script>
-    (function () {
-      function login() {
-        var pw  = document.getElementById('gate-password').value.trim();
-        var err = document.getElementById('gate-error');
-        var expected = (typeof ADMIN_PASSWORD !== 'undefined') ? ADMIN_PASSWORD : 'lorenz2024';
+    document.getElementById('gate-password').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') doLogin();
+    });
 
-        if (pw === expected) {
-          err.style.display = 'none';
-          if (typeof unlockDashboard === 'function') {
-            unlockDashboard();
-          } else {
-            document.getElementById('admin-gate').style.display = 'none';
-            document.getElementById('admin-dashboard').style.display = 'block';
-            sessionStorage.setItem('lorenz-admin', '1');
-          }
+    function doLogin() {
+      var pw  = document.getElementById('gate-password').value.trim();
+      var err = document.getElementById('gate-error');
+      var expected = (typeof ADMIN_PASSWORD !== 'undefined') ? ADMIN_PASSWORD : 'lorenz2024';
+
+      if (pw === expected) {
+        err.style.display = 'none';
+        if (typeof unlockDashboard === 'function') {
+          unlockDashboard();
         } else {
-          err.textContent = 'Falsches Passwort.';
-          err.style.display = 'block';
+          document.getElementById('admin-gate').style.display = 'none';
+          document.getElementById('admin-dashboard').style.display = 'block';
+          sessionStorage.setItem('lorenz-admin', '1');
         }
+      } else {
+        err.textContent = 'Falsches Passwort.';
+        err.style.display = 'block';
       }
-
-      document.getElementById('login-btn').addEventListener('click', login);
-      document.getElementById('gate-password').addEventListener('keydown', function (e) {
-        if (e.key === 'Enter') login();
-      });
-    }());
+    }
   </script>
 
   <!-- ── ADMIN DASHBOARD ── -->
@@ -64,13 +60,16 @@
         <div class="admin-header-inner">
           <a href="index.html" class="nav-logo">DJ ADLE</a>
           <span class="admin-page-title">Edmund Panel</span>
-          <button id="logout-btn" class="btn btn-outline btn-sm">Abmelden</button>
+          <button onclick="logout()" class="btn btn-outline btn-sm">Abmelden</button>
         </div>
       </div>
     </header>
 
     <main class="admin-main">
       <div class="container">
+
+        <!-- Status-Meldung -->
+        <div id="admin-status" style="display:none;padding:10px 16px;border-radius:8px;background:var(--surface);margin-bottom:16px;font-size:0.875rem;"></div>
 
         <!-- Stats -->
         <div class="admin-stats">
@@ -93,21 +92,21 @@
         </div>
 
         <!-- Tab bar -->
-        <div class="admin-tabs" id="admin-tabs">
-          <button class="tab-btn active" data-tab="calendar">📅 Kalender</button>
-          <button class="tab-btn" data-tab="list">📋 Buchungsliste</button>
+        <div class="admin-tabs">
+          <button class="tab-btn active" data-tab="calendar" onclick="switchTab('calendar')">📅 Kalender</button>
+          <button class="tab-btn" data-tab="list" onclick="switchTab('list')">📋 Buchungsliste</button>
         </div>
 
         <!-- ── KALENDER TAB ── -->
         <div class="tab-panel" id="tab-calendar">
           <div class="cal-layout">
 
-            <!-- Kalender-Grid -->
+            <!-- Kalender -->
             <div class="cal-panel">
               <div class="month-nav">
-                <button class="month-btn" id="prev-month" aria-label="Vorheriger Monat">&#8249;</button>
-                <h3 id="month-label">Juni 2026</h3>
-                <button class="month-btn" id="next-month" aria-label="Nächster Monat">&#8250;</button>
+                <button class="month-btn" onclick="prevMonth()" aria-label="Vorheriger Monat">&#8249;</button>
+                <h3 id="month-label">–</h3>
+                <button class="month-btn" onclick="nextMonth()" aria-label="Nächster Monat">&#8250;</button>
               </div>
               <div class="cal-weekdays">
                 <span>Mo</span><span>Di</span><span>Mi</span><span>Do</span><span>Fr</span>
@@ -122,11 +121,11 @@
               </div>
             </div>
 
-            <!-- Tag-Detail-Panel -->
+            <!-- Tag-Detail -->
             <div class="day-detail" id="day-detail">
               <div class="day-detail-header">
                 <h3 id="detail-date-heading">Tag auswählen</h3>
-                <button class="block-btn" id="block-btn" style="display:none">🔒 Sperren</button>
+                <button class="block-btn" id="block-btn" onclick="toggleBlock()" style="display:none">🔒 Sperren</button>
               </div>
               <div id="day-detail-body">
                 <p class="detail-hint">← Klicke auf einen Tag im Kalender.</p>
@@ -138,11 +137,11 @@
 
         <!-- ── BUCHUNGSLISTE TAB ── -->
         <div class="tab-panel hidden" id="tab-list">
-          <div class="admin-filter" id="filter-bar">
-            <button class="filter-btn active" data-filter="all">Alle</button>
-            <button class="filter-btn" data-filter="pending">Ausstehend</button>
-            <button class="filter-btn" data-filter="confirmed">Bestätigt</button>
-            <button class="filter-btn" data-filter="cancelled">Abgelehnt</button>
+          <div class="admin-filter">
+            <button class="filter-btn active" data-filter="all"       onclick="filterTable('all')">Alle</button>
+            <button class="filter-btn"        data-filter="pending"   onclick="filterTable('pending')">Ausstehend</button>
+            <button class="filter-btn"        data-filter="confirmed" onclick="filterTable('confirmed')">Bestätigt</button>
+            <button class="filter-btn"        data-filter="cancelled" onclick="filterTable('cancelled')">Abgelehnt</button>
           </div>
           <div class="admin-table-wrapper">
             <div id="admin-loading" class="admin-loading">Buchungen werden geladen …</div>
@@ -170,12 +169,11 @@
       </div>
     </main>
 
-    <!-- Mobile backdrop für Day-Detail -->
-    <div class="detail-backdrop hidden" id="detail-backdrop"></div>
+    <!-- Mobile backdrop -->
+    <div class="detail-backdrop hidden" id="detail-backdrop" onclick="closeDetail()"></div>
 
   </div>
 
-  <!-- SCRIPTS -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
   <script src="admin.js"></script>
