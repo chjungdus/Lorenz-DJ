@@ -144,6 +144,9 @@ section { padding: 96px 0; }
 }
 
 .nav-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   font-family: 'Space Grotesk', sans-serif;
   font-size: 1.4rem;
   font-weight: 900;
@@ -408,10 +411,13 @@ section { padding: 96px 0; }
 }
 
 .about-photo img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
+  z-index: 1;
 }
 
 .photo-placeholder {
@@ -1395,4 +1401,95 @@ section { padding: 96px 0; }
   .hero-actions .btn-primary { box-shadow: 0 2px 12px rgba(124,58,237,.35); }
   .event-nr { transition: none !important; }
   .section-header h2::after { transition: none !important; width: 36px !important; }
+}
+
+/* ============================================================
+   ADLER SVG
+   ============================================================ */
+
+/* Nav-Adler */
+.nav-eagle { width: 36px; height: auto; flex-shrink: 0; }
+
+/* Hero-Adler – großes dekoratives Hintergrundelement */
+.hero-eagle {
+  position: absolute;
+  bottom: -6%;
+  right: -8%;
+  width: 62%;
+  max-width: 700px;
+  opacity: 0.09;
+  z-index: 1;
+  pointer-events: none;
+  transform: rotate(-5deg);
+}
+.hero-eagle svg { width: 100%; height: auto; display: block; }
+
+/* Footer-Adler */
+.footer-eagle-svg {
+  width: 150px;
+  height: auto;
+  opacity: 0.45;
+  display: block;
+  margin-bottom: 14px;
+}
+
+/* Equipment-Foto */
+.equip-photo-wrap {
+  border: 2px solid var(--border);
+  overflow: hidden;
+  margin-bottom: 20px;
+  height: 320px;
+  position: relative;
+  background: var(--surface);
+}
+.equip-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  z-index: 1;
+}
+.equip-photo-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(255,255,255,.2);
+  z-index: 0;
+}
+
+/* Photo-Break Bild */
+.photo-break-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  z-index: 0;
+}
+
+/* About-Foto – Platzhalter bleibt sichtbar bis Foto geladen */
+.about-photo .photo-placeholder {
+  position: absolute;
+  inset: 0;
+  min-height: 0;
+  z-index: 0;
+}
+
+@media (max-width: 768px) {
+  .hero-eagle { width: 90%; right: -18%; opacity: 0.07; }
+  .equip-photo-wrap { height: 220px; }
+  .footer-eagle-svg { width: 110px; }
+}
+@media (max-width: 480px) {
+  .hero-eagle { width: 100%; right: -20%; }
+  .equip-photo-wrap { height: 180px; }
 }

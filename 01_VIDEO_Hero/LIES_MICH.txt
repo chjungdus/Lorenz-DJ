@@ -1,0 +1,14 @@
+VIDEO – HERO HINTERGRUND
+========================
+
+Datei hier ablegen und benennen: hero.mp4
+
+- Format:    MP4 (.mp4)
+- Ausrichtung: Querformat (Landscape)
+- Wird stummgeschaltet und als Loop im Hintergrund abgespielt
+- Das Schwarz-Weiß-Video passt perfekt!
+
+OPTIONAL – Vorschaubild (wird angezeigt bevor das Video lädt):
+Datei: poster.jpg  (Screenshot des Videos, Querformat)
+
+Anschließend erscheint das Video automatisch auf der Website.
