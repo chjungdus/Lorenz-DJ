@@ -98,24 +98,25 @@ form.addEventListener('submit', async (e) => {
   msgBox.className      = 'form-message';
   msgBox.textContent    = '';
 
-  // Supabase erst hier initialisieren – vermeidet Fehler bei Platzhalter-URL
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   const payload = {
-    name:        form.name.value.trim(),
-    email:       form.email.value.trim(),
-    phone:       form.phone.value.trim(),
-    event_date:  form.event_date.value,
+    name:           form.name.value.trim(),
+    email:          form.email.value.trim(),
+    phone:          form.phone.value.trim(),
+    event_date:     form.event_date.value,
     event_time:     form.event_time.value,
     event_time_end: form.event_time_end.value || null,
     guest_count:    parseInt(form.guest_count.value, 10),
-    message:     form.message.value.trim() || null,
+    event_location: form.event_location ? (form.event_location.value.trim() || null) : null,
+    message:        form.message.value.trim() || null,
   };
 
   const { error } = await supabase.from('bookings').insert([payload]);
 
   if (error) {
-    showMessage('Etwas ist schiefgelaufen. Bitte versuch es nochmal oder meld dich direkt.', 'error');
+    const detail = error.message || JSON.stringify(error);
+    showMessage(`Fehler beim Senden: ${detail}`, 'error');
     console.error(error);
   } else {
     showMessage('Anfrage erfolgreich! Ich melde mich innerhalb von 24 Stunden bei dir.', 'success');

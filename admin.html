@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin – DJ Lorenz</title>
+  <title>Admin – DJ Adle</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -56,14 +56,14 @@
     }());
   </script>
 
-  <!-- ── ADMIN DASHBOARD (nach Login sichtbar) ── -->
+  <!-- ── ADMIN DASHBOARD ── -->
   <div id="admin-dashboard" style="display:none">
 
     <header class="admin-header">
       <div class="container">
         <div class="admin-header-inner">
-          <a href="index.html" class="nav-logo">LORENZ</a>
-          <span class="admin-page-title">Buchungsübersicht</span>
+          <a href="index.html" class="nav-logo">DJ ADLE</a>
+          <span class="admin-page-title">Edmund Panel</span>
           <button id="logout-btn" class="btn btn-outline btn-sm">Abmelden</button>
         </div>
       </div>
@@ -72,7 +72,7 @@
     <main class="admin-main">
       <div class="container">
 
-        <!-- Stats-Karten -->
+        <!-- Stats -->
         <div class="admin-stats">
           <div class="admin-stat-card">
             <span class="admin-stat-num" id="stat-total">–</span>
@@ -92,40 +92,87 @@
           </div>
         </div>
 
-        <!-- Filter -->
-        <div class="admin-filter" id="filter-bar">
-          <button class="filter-btn active" data-filter="all">Alle</button>
-          <button class="filter-btn" data-filter="pending">Ausstehend</button>
-          <button class="filter-btn" data-filter="confirmed">Bestätigt</button>
-          <button class="filter-btn" data-filter="cancelled">Abgelehnt</button>
+        <!-- Tab bar -->
+        <div class="admin-tabs" id="admin-tabs">
+          <button class="tab-btn active" data-tab="calendar">📅 Kalender</button>
+          <button class="tab-btn" data-tab="list">📋 Buchungsliste</button>
         </div>
 
-        <!-- Tabelle -->
-        <div class="admin-table-wrapper">
-          <div id="admin-loading" class="admin-loading">Buchungen werden geladen …</div>
-          <table class="admin-table" id="bookings-table" style="display:none">
-            <thead>
-              <tr>
-                <th>Eventdatum</th>
-                <th>Name</th>
-                <th>E-Mail</th>
-                <th>Telefon</th>
-                <th>Uhrzeit</th>
-                <th>Personen</th>
-                <th>Nachricht</th>
-                <th>Status</th>
-                <th>Eingegangen</th>
-              </tr>
-            </thead>
-            <tbody id="bookings-body"></tbody>
-          </table>
-          <p class="admin-empty" id="admin-empty" style="display:none">
-            Keine Buchungen gefunden.
-          </p>
+        <!-- ── KALENDER TAB ── -->
+        <div class="tab-panel" id="tab-calendar">
+          <div class="cal-layout">
+
+            <!-- Kalender-Grid -->
+            <div class="cal-panel">
+              <div class="month-nav">
+                <button class="month-btn" id="prev-month" aria-label="Vorheriger Monat">&#8249;</button>
+                <h3 id="month-label">Juni 2026</h3>
+                <button class="month-btn" id="next-month" aria-label="Nächster Monat">&#8250;</button>
+              </div>
+              <div class="cal-weekdays">
+                <span>Mo</span><span>Di</span><span>Mi</span><span>Do</span><span>Fr</span>
+                <span class="weekend">Sa</span><span class="weekend">So</span>
+              </div>
+              <div class="cal-grid" id="admin-cal-grid"></div>
+              <div class="cal-legend">
+                <span class="legend-dot pending"></span> Ausstehend&ensp;
+                <span class="legend-dot confirmed"></span> Bestätigt&ensp;
+                <span class="legend-dot cancelled"></span> Abgelehnt&ensp;
+                <span class="legend-dot-blocked"></span> Gesperrt
+              </div>
+            </div>
+
+            <!-- Tag-Detail-Panel -->
+            <div class="day-detail" id="day-detail">
+              <div class="day-detail-header">
+                <h3 id="detail-date-heading">Tag auswählen</h3>
+                <button class="block-btn" id="block-btn" style="display:none">🔒 Sperren</button>
+              </div>
+              <div id="day-detail-body">
+                <p class="detail-hint">← Klicke auf einen Tag im Kalender.</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ── BUCHUNGSLISTE TAB ── -->
+        <div class="tab-panel hidden" id="tab-list">
+          <div class="admin-filter" id="filter-bar">
+            <button class="filter-btn active" data-filter="all">Alle</button>
+            <button class="filter-btn" data-filter="pending">Ausstehend</button>
+            <button class="filter-btn" data-filter="confirmed">Bestätigt</button>
+            <button class="filter-btn" data-filter="cancelled">Abgelehnt</button>
+          </div>
+          <div class="admin-table-wrapper">
+            <div id="admin-loading" class="admin-loading">Buchungen werden geladen …</div>
+            <table class="admin-table" id="bookings-table" style="display:none">
+              <thead>
+                <tr>
+                  <th>Datum</th>
+                  <th>Name</th>
+                  <th>E-Mail</th>
+                  <th>Telefon</th>
+                  <th>Uhrzeit</th>
+                  <th>Personen</th>
+                  <th>Ort</th>
+                  <th>Nachricht</th>
+                  <th>Status</th>
+                  <th>Eingegangen</th>
+                </tr>
+              </thead>
+              <tbody id="bookings-body"></tbody>
+            </table>
+            <p class="admin-empty" id="admin-empty" style="display:none">Keine Buchungen gefunden.</p>
+          </div>
         </div>
 
       </div>
     </main>
+
+    <!-- Mobile backdrop für Day-Detail -->
+    <div class="detail-backdrop hidden" id="detail-backdrop"></div>
+
   </div>
 
   <!-- SCRIPTS -->
