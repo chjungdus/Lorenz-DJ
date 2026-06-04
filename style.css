@@ -3,20 +3,20 @@
 html { overflow-x: hidden; }
 
 :root {
-  --bg:           #FAFAFA;
-  --white:        #FFFFFF;
-  --surface:      #F5F0FF;
+  --bg:           #07050F;
+  --white:        #0F0C1C;
+  --surface:      #181228;
 
   --purple:       #7C3AED;
   --purple-light: #A78BFA;
   --pink:         #EC4899;
 
-  --text:         #0F0A1E;
-  --text-muted:   #64748B;
-  --border:       #DDD6F3;
+  --text:         #EDE8FF;
+  --text-muted:   #9485C4;
+  --border:       #261B42;
 
   --gradient:      linear-gradient(135deg, #7C3AED 0%, #EC4899 100%);
-  --gradient-soft: linear-gradient(135deg, #F5F0FF 0%, #FDE8F6 100%);
+  --gradient-soft: linear-gradient(135deg, #1C0E38 0%, #100820 100%);
 
   /* Kein Pill-Design, scharfe Ecken */
   --radius-sm:   3px;
@@ -24,8 +24,8 @@ html { overflow-x: hidden; }
   --radius-lg:   4px;
   --radius-full: 4px;
 
-  --shadow-sm: 0 1px 4px  rgba(0,0,0,.08);
-  --shadow-md: 0 4px 20px rgba(0,0,0,.10);
+  --shadow-sm: 0 1px 4px  rgba(0,0,0,.5);
+  --shadow-md: 0 4px 20px rgba(0,0,0,.6);
 
   --ease: 0.25s ease;
 }
@@ -136,7 +136,7 @@ section { padding: 96px 0; }
 }
 
 .navbar.scrolled {
-  background: rgba(255,255,255,.95);
+  background: rgba(7, 5, 15, 0.96);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
@@ -425,7 +425,7 @@ section { padding: 96px 0; }
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: var(--border);
+  color: rgba(255,255,255,.2);
   background: var(--surface);
 }
 
@@ -784,9 +784,9 @@ section { padding: 96px 0; }
   border-radius: 2px;
 }
 
-.rw-gratis  { background: #D1FAE5; color: #059669; }
-.rw-kosten  { background: #EDE9FE; color: #7C3AED; }
-.rw-anfrage { background: #FEF3C7; color: #D97706; }
+.rw-gratis  { background: #0A2318; color: #34D399; }
+.rw-kosten  { background: #1A0E30; color: #A78BFA; }
+.rw-anfrage { background: #2A1A05; color: #FBBF24; }
 
 /* Karte */
 .anfahrt-map {
@@ -943,18 +943,18 @@ section { padding: 96px 0; }
 }
 
 .form-message.success {
-  background: #ECFDF5; color: #059669;
-  border-color: #059669; display: block;
+  background: #0A2318; color: #34D399;
+  border-color: #34D399; display: block;
 }
 
 .form-message.error {
-  background: #FEF2F2; color: #DC2626;
-  border-color: #DC2626; display: block;
+  background: #2A0F0F; color: #F87171;
+  border-color: #F87171; display: block;
 }
 
 /* === FOOTER === */
 .footer {
-  background: var(--text);
+  background: #04030A;
   color: rgba(255,255,255,.55);
 }
 
@@ -1234,7 +1234,7 @@ section { padding: 96px 0; }
   border-color: var(--purple-light);
 }
 .preis-highlight {
-  background: linear-gradient(160deg, #FAF5FF 0%, #FDE8F6 100%);
+  background: linear-gradient(160deg, #1E1030 0%, #1A0D28 100%);
 }
 .preis-highlight:hover {
   box-shadow: 0 20px 56px rgba(124,58,237,.24);
