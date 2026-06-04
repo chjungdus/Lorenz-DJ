@@ -23,14 +23,17 @@ CREATE TABLE IF NOT EXISTS bookings (
 ALTER TABLE bookings ENABLE ROW LEVEL SECURITY;
 
 -- Buchungen einreichen (öffentliches Formular)
+DROP POLICY IF EXISTS "allow_public_insert" ON bookings;
 CREATE POLICY "allow_public_insert" ON bookings
   FOR INSERT TO anon WITH CHECK (true);
 
 -- Buchungen lesen (für Admin-Ansicht)
+DROP POLICY IF EXISTS "allow_public_select" ON bookings;
 CREATE POLICY "allow_public_select" ON bookings
   FOR SELECT TO anon USING (true);
 
 -- Buchungsstatus ändern (für Admin)
+DROP POLICY IF EXISTS "allow_public_update" ON bookings;
 CREATE POLICY "allow_public_update" ON bookings
   FOR UPDATE TO anon USING (true) WITH CHECK (true);
 
@@ -48,11 +51,14 @@ CREATE TABLE IF NOT EXISTS blocked_dates (
 
 ALTER TABLE blocked_dates ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "allow_public_select_blocked" ON blocked_dates;
 CREATE POLICY "allow_public_select_blocked" ON blocked_dates
   FOR SELECT TO anon USING (true);
 
+DROP POLICY IF EXISTS "allow_public_insert_blocked" ON blocked_dates;
 CREATE POLICY "allow_public_insert_blocked" ON blocked_dates
   FOR INSERT TO anon WITH CHECK (true);
 
+DROP POLICY IF EXISTS "allow_public_delete_blocked" ON blocked_dates;
 CREATE POLICY "allow_public_delete_blocked" ON blocked_dates
   FOR DELETE TO anon USING (true);
