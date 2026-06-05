@@ -1,0 +1,10 @@
+FOTO 1 – PROFIL / ÜBER MICH
+============================
+
+Datei hier ablegen und benennen: profil.jpg
+
+- Ausrichtung: Hochformat (Portrait), z. B. 3:4 oder 4:5
+- Zeigt dich oder dich am DJ-Pult
+- Erscheint im "Über mich" Bereich neben dem Text
+
+JPG oder WebP funktionieren beide.

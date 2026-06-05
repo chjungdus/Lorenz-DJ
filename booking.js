@@ -1,7 +1,52 @@
 // booking.js – Navbar-Scroll + Buchungsformular mit Supabase
 
-// Supabase-Client initialisieren
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Scroll-Reveal
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('revealed');
+      revealObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12 });
+document.querySelectorAll('[data-reveal]').forEach(el => revealObserver.observe(el));
+
+// Ripple-Effekt auf allen Buttons
+document.querySelectorAll('.btn').forEach(btn => {
+  btn.style.position = 'relative';
+  btn.style.overflow = 'hidden';
+  btn.addEventListener('click', (e) => {
+    const r = document.createElement('span');
+    r.className = 'ripple';
+    const rect = btn.getBoundingClientRect();
+    r.style.left = (e.clientX - rect.left - 6) + 'px';
+    r.style.top  = (e.clientY - rect.top  - 6) + 'px';
+    btn.appendChild(r);
+    setTimeout(() => r.remove(), 700);
+  });
+});
+
+// Stats-Counter im Hero-Card
+function animateCounter(el, target, suffix, duration) {
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduced) return;
+  let start = null;
+  function step(ts) {
+    if (!start) start = ts;
+    const p = Math.min((ts - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.floor(eased * target) + suffix;
+    if (p < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.querySelectorAll('[data-counter]').forEach(el => {
+      animateCounter(el, parseInt(el.dataset.counter), el.dataset.suffix || '', 1400);
+    });
+  }, 1300);
+});
 
 // Navbar: Hintergrund beim Scrollen einblenden
 window.addEventListener('scroll', () => {
@@ -9,17 +54,90 @@ window.addEventListener('scroll', () => {
     .classList.toggle('scrolled', window.scrollY > 50);
 });
 
+// Hamburger-Menü
+const hamburger = document.getElementById('nav-hamburger');
+const navLinks  = document.getElementById('nav-links');
+
+hamburger.addEventListener('click', () => {
+  const isOpen = hamburger.classList.toggle('open');
+  navLinks.classList.toggle('open', isOpen);
+  hamburger.setAttribute('aria-expanded', isOpen);
+});
+
+navLinks.querySelectorAll('a').forEach(link => {
+  link.addEventListener('click', () => {
+    hamburger.classList.remove('open');
+    navLinks.classList.remove('open');
+    hamburger.setAttribute('aria-expanded', 'false');
+  });
+});
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.navbar')) {
+    hamburger.classList.remove('open');
+    navLinks.classList.remove('open');
+    hamburger.setAttribute('aria-expanded', 'false');
+  }
+});
+
+// Buchungsformular – Datumsverfügbarkeit
+var _unavailableDates = [];
+var _bookingSb = null;
+
+(function initAvailability() {
+  if (typeof SUPABASE_URL === 'undefined' || SUPABASE_URL === 'DEINE_SUPABASE_URL') return;
+  try {
+    _bookingSb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  } catch (e) { return; }
+
+  Promise.all([
+    _bookingSb.from('blocked_dates').select('date'),
+    _bookingSb.from('bookings').select('event_date').eq('status', 'confirmed')
+  ]).then(function (results) {
+    var blockedRes   = results[0];
+    var confirmedRes = results[1];
+    if (!blockedRes.error && blockedRes.data) {
+      blockedRes.data.forEach(function (r) { _unavailableDates.push(r.date); });
+    }
+    if (!confirmedRes.error && confirmedRes.data) {
+      confirmedRes.data.forEach(function (r) {
+        if (_unavailableDates.indexOf(r.event_date) === -1) _unavailableDates.push(r.event_date);
+      });
+    }
+  }).catch(function () {});
+}());
+
+// Warnhinweis-Element am Datumsfeld
+var _dateInput = document.getElementById('event_date');
+if (_dateInput) {
+  var _dateWarn = document.createElement('p');
+  _dateWarn.style.cssText = 'color:#F87171;font-size:0.85rem;margin-top:6px;display:none;font-weight:600;';
+  _dateWarn.textContent = '⚠ Dieser Tag ist bereits vergeben oder gesperrt. Bitte ein anderes Datum wählen.';
+  _dateInput.parentNode.appendChild(_dateWarn);
+
+  _dateInput.addEventListener('change', function () {
+    _dateWarn.style.display = (_dateInput.value && _unavailableDates.indexOf(_dateInput.value) !== -1)
+      ? 'block' : 'none';
+  });
+}
+
 // Buchungsformular
-const form       = document.getElementById('booking-form');
-const submitBtn  = document.getElementById('submit-btn');
-const msgBox     = document.getElementById('form-message');
+const form      = document.getElementById('booking-form');
+const submitBtn = document.getElementById('submit-btn');
+const msgBox    = document.getElementById('form-message');
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  // Konfiguration prüfen
   if (SUPABASE_URL === 'DEINE_SUPABASE_URL' || SUPABASE_ANON_KEY === 'DEIN_ANON_KEY') {
     showMessage('Bitte trage zuerst deine Supabase-Zugangsdaten in config.js ein.', 'error');
+    return;
+  }
+
+  // Block submission on unavailable date
+  const chosenDate = form.event_date.value;
+  if (chosenDate && _unavailableDates.indexOf(chosenDate) !== -1) {
+    showMessage('Dieser Tag ist bereits vergeben oder gesperrt. Bitte ein anderes Datum wählen.', 'error');
     return;
   }
 
@@ -28,23 +146,28 @@ form.addEventListener('submit', async (e) => {
   msgBox.className      = 'form-message';
   msgBox.textContent    = '';
 
+  const supabase = _bookingSb || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
   const payload = {
-    name:        form.name.value.trim(),
-    email:       form.email.value.trim(),
-    phone:       form.phone.value.trim(),
-    event_date:  form.event_date.value,
-    event_time:  form.event_time.value,
-    guest_count: parseInt(form.guest_count.value, 10),
-    message:     form.message.value.trim() || null,
+    name:           form.name.value.trim(),
+    email:          form.email.value.trim(),
+    phone:          form.phone.value.trim(),
+    event_date:     form.event_date.value,
+    event_time:     form.event_time.value,
+    event_time_end: form.event_time_end.value || null,
+    guest_count:    parseInt(form.guest_count.value, 10),
+    event_location: form.event_location ? (form.event_location.value.trim() || null) : null,
+    message:        form.message.value.trim() || null,
   };
 
   const { error } = await supabase.from('bookings').insert([payload]);
 
   if (error) {
-    showMessage('Etwas ist schiefgelaufen. Bitte versuch es nochmal oder meld dich direkt.', 'error');
+    const detail = error.message || JSON.stringify(error);
+    showMessage(`Fehler beim Senden: ${detail}`, 'error');
     console.error(error);
   } else {
-    showMessage('🎉 Anfrage erfolgreich! Ich melde mich innerhalb von 24 Stunden bei dir.', 'success');
+    showMessage('Anfrage erfolgreich! Ich melde mich innerhalb von 24 Stunden bei dir.', 'success');
     form.reset();
   }
 
