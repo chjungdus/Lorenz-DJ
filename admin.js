@@ -348,12 +348,8 @@ async function updateStatus(id, newStatus) {
   if (!_sb) { showError('Kein Supabase-Client.'); return; }
   showInfo('Status wird gespeichert…');
   try {
-    var res = await _sb.from('bookings').update({ status: newStatus }).eq('id', id).select();
-    if (res.error) { showError('Fehler beim Speichern: ' + res.error.message); return; }
-    if (!res.data || res.data.length === 0) {
-      showError('Kein Eintrag aktualisiert – RLS-Berechtigung prüfen!');
-      return;
-    }
+    var res = await _sb.rpc('admin_set_booking_status', { p_id: id, p_status: newStatus });
+    if (res.error) { showError('Fehler: ' + res.error.message); return; }
     for (var i = 0; i < allBookings.length; i++) {
       if (allBookings[i].id === id) { allBookings[i].status = newStatus; break; }
     }
@@ -380,16 +376,12 @@ async function doToggleBlock(dateStr) {
   showInfo(isBlocked ? 'Tag wird freigegeben…' : 'Tag wird gesperrt…');
   try {
     if (isBlocked) {
-      var r = await _sb.from('blocked_dates').delete().eq('date', dateStr);
+      var r = await _sb.rpc('admin_unblock_date', { p_date: dateStr });
       if (r.error) { showError('Fehler: ' + r.error.message); return; }
       allBlocked = allBlocked.filter(function (d) { return d !== dateStr; });
     } else {
-      var r2 = await _sb.from('blocked_dates').insert([{ date: dateStr }]).select();
+      var r2 = await _sb.rpc('admin_block_date', { p_date: dateStr });
       if (r2.error) { showError('Fehler beim Sperren: ' + r2.error.message); return; }
-      if (!r2.data || r2.data.length === 0) {
-        showError('Sperren fehlgeschlagen – RLS-Berechtigung prüfen!');
-        return;
-      }
       allBlocked.push(dateStr);
     }
     showInfo('');
