@@ -37,6 +37,10 @@ DROP POLICY IF EXISTS "allow_public_update" ON bookings;
 CREATE POLICY "allow_public_update" ON bookings
   FOR UPDATE TO anon USING (true) WITH CHECK (true);
 
+-- Schreibrechte für anon explizit erteilen
+-- (RLS-Policies allein reichen nicht – PostgreSQL braucht auch GRANT)
+GRANT SELECT, INSERT, UPDATE ON bookings TO anon;
+
 -- Spalten nachträglich hinzufügen (sicher, falls Tabelle bereits existiert)
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS event_time_end TIME;
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS event_location TEXT;
@@ -62,3 +66,6 @@ CREATE POLICY "allow_public_insert_blocked" ON blocked_dates
 DROP POLICY IF EXISTS "allow_public_delete_blocked" ON blocked_dates;
 CREATE POLICY "allow_public_delete_blocked" ON blocked_dates
   FOR DELETE TO anon USING (true);
+
+-- Schreibrechte für anon
+GRANT SELECT, INSERT, DELETE ON blocked_dates TO anon;
