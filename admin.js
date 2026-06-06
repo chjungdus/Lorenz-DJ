@@ -317,6 +317,11 @@ function renderDayDetail(dateStr) {
         + '<button class="action-btn btn-reject"  onclick="updateStatus(\'' + b.id + '\',\'cancelled\')"' + (b.status === 'cancelled' ? ' disabled' : '') + '>✕ Ablehnen</button>'
         + '<button class="action-btn btn-reset"   onclick="updateStatus(\'' + b.id + '\',\'pending\')"'   + (b.status === 'pending'   ? ' disabled' : '') + '>↺ Zurücksetzen</button>'
       + '</div>'
+      + '<div class="booking-notes">'
+        + '<label class="notes-label">Notizen (nur für dich sichtbar)</label>'
+        + '<textarea class="notes-input" id="notes-' + b.id + '" placeholder="z.B. Musikwünsche, Anfahrt, Besonderheiten…">' + esc(b.admin_notes || '') + '</textarea>'
+        + '<button class="action-btn btn-save-notes" onclick="saveNotes(\'' + b.id + '\')">💾 Notiz speichern</button>'
+      + '</div>'
     + '</div>';
   }).join('');
 }
@@ -395,6 +400,57 @@ async function doToggleBlock(dateStr) {
     if (selectedDate === dateStr) renderDayDetail(dateStr);
   } catch (e) {
     showError('Netzwerkfehler: ' + e.message);
+  }
+}
+
+async function blockRange() {
+  var from = document.getElementById('range-from')?.value;
+  var to   = document.getElementById('range-to')?.value;
+  if (!from || !to) { showError('Bitte Von- und Bis-Datum auswählen.'); return; }
+  if (from > to)    { showError('Von-Datum muss vor Bis-Datum liegen.'); return; }
+
+  showInfo('Zeitraum wird gesperrt…');
+  var dates = [];
+  var cur = new Date(from + 'T00:00:00');
+  var end = new Date(to   + 'T00:00:00');
+  while (cur <= end) {
+    var ds = cur.getFullYear() + '-' + pad2(cur.getMonth()+1) + '-' + pad2(cur.getDate());
+    if (allBlocked.indexOf(ds) === -1) dates.push({ date: ds });
+    cur.setDate(cur.getDate() + 1);
+  }
+
+  if (dates.length === 0) { showInfo('Alle Tage bereits gesperrt.'); return; }
+
+  var r = await _sb.from('blocked_dates').insert(dates);
+  if (r.error) { showError('Fehler: ' + r.error.message); return; }
+
+  dates.forEach(function(d) { allBlocked.push(d.date); });
+  showInfo(dates.length + ' Tage gesperrt.');
+  document.getElementById('range-from').value = '';
+  document.getElementById('range-to').value   = '';
+  try { renderCalendar(); } catch(e) {}
+  setTimeout(function() { showInfo(''); }, 2000);
+}
+
+async function saveNotes(id) {
+  if (!_sb) return;
+  var ta = document.getElementById('notes-' + id);
+  if (!ta) return;
+  var notes = ta.value;
+
+  var res = await _sb.from('bookings').update({ admin_notes: notes }).eq('id', id);
+  if (res.error) { showError('Fehler beim Speichern: ' + res.error.message); return; }
+
+  for (var i = 0; i < allBookings.length; i++) {
+    if (allBookings[i].id === id) { allBookings[i].admin_notes = notes; break; }
+  }
+
+  var btn = document.querySelector('#notes-' + id + ' ~ .btn-save-notes');
+  if (!btn) { btn = ta.parentElement.querySelector('.btn-save-notes'); }
+  if (btn) {
+    var orig = btn.textContent;
+    btn.textContent = '✓ Gespeichert!';
+    setTimeout(function() { btn.textContent = orig; }, 1800);
   }
 }
 

@@ -1064,3 +1064,100 @@
   .day-num   { font-size: 0.72rem; }
   .booking-info { grid-template-columns: 1fr; }
 }
+
+/* === RANGE BLOCKING === */
+.range-block-panel {
+  background: var(--white);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  margin-top: 20px;
+}
+
+.range-block-panel h4 {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+}
+
+.range-block-inputs {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.range-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.range-field label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.range-date-input {
+  padding: 10px 14px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 0.9rem;
+  background: var(--bg);
+  color: var(--text);
+  outline: none;
+  transition: var(--ease);
+}
+.range-date-input:focus { border-color: var(--purple); }
+
+/* === BOOKING NOTES === */
+.booking-notes {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.notes-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+}
+
+.notes-input {
+  width: 100%;
+  min-height: 72px;
+  padding: 10px 12px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 0.85rem;
+  resize: vertical;
+  background: var(--bg);
+  color: var(--text);
+  outline: none;
+  transition: var(--ease);
+  box-sizing: border-box;
+}
+.notes-input:focus { border-color: var(--purple); }
+
+.btn-save-notes {
+  align-self: flex-end;
+  padding: 7px 18px;
+  font-size: 0.78rem;
+  background: var(--surface);
+  color: var(--text-muted);
+  border: 2px solid var(--border);
+}
+.btn-save-notes:hover { background: var(--purple); color: white; border-color: var(--purple); }
