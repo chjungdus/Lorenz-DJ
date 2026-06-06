@@ -1,6 +1,5 @@
-// admin.js – Edmund Panel (clean rewrite)
+// admin.js – Edmund Panel
 
-// ── GLOBAL STATE ──────────────────────────────────────────
 var _sb          = null;
 var allBookings  = [];
 var allBlocked   = [];
@@ -9,13 +8,11 @@ var curFilter    = 'all';
 
 var _now     = new Date();
 var curYear  = _now.getFullYear();
-var curMonth = _now.getMonth(); // 0-based
+var curMonth = _now.getMonth();
 
 // ── HELPERS ───────────────────────────────────────────────
 
-function pad2(n) {
-  return n < 10 ? '0' + n : '' + n;
-}
+function pad2(n) { return n < 10 ? '0' + n : '' + n; }
 
 function esc(str) {
   return String(str == null ? '' : str)
@@ -44,10 +41,9 @@ function statusLabel(s) {
 function estimatePrice(n) {
   n = parseInt(n, 10);
   if (!n)       return '–';
-  if (n <= 30)  return '~150–200 €';
-  if (n <= 80)  return '~200–350 €';
-  if (n <= 150) return '~350–500 €';
-  return '500+ €';
+  if (n <= 50)  return '~80–150 €';
+  if (n <= 150) return '~150–300 €';
+  return '300+ €';
 }
 
 // ── STATUS BANNER ─────────────────────────────────────────
@@ -55,37 +51,36 @@ function estimatePrice(n) {
 function showInfo(msg) {
   var el = document.getElementById('admin-status');
   if (!el) return;
-  el.textContent = msg || '';
-  el.style.display = msg ? 'block' : 'none';
-  el.style.background = 'var(--surface)';
-  el.style.color      = 'var(--text-muted)';
-  el.style.borderLeft = 'none';
+  el.textContent       = msg || '';
+  el.style.display     = msg ? 'block' : 'none';
+  el.style.background  = 'var(--surface)';
+  el.style.color       = 'var(--text-muted)';
+  el.style.borderLeft  = 'none';
 }
 
 function showError(msg) {
   var el = document.getElementById('admin-status');
   if (!el) { console.error('[admin]', msg); return; }
-  el.textContent = msg || '';
-  el.style.display    = msg ? 'block' : 'none';
-  el.style.background = 'rgba(239,68,68,0.12)';
-  el.style.color      = '#F87171';
-  el.style.borderLeft = '3px solid #EF4444';
-  el.style.padding    = '10px 16px';
+  el.textContent        = msg || '';
+  el.style.display      = msg ? 'block' : 'none';
+  el.style.background   = 'rgba(239,68,68,0.12)';
+  el.style.color        = '#F87171';
+  el.style.borderLeft   = '3px solid #EF4444';
+  el.style.padding      = '10px 16px';
   el.style.borderRadius = '8px';
   console.error('[admin]', msg);
 }
 
 // ── LOGIN ─────────────────────────────────────────────────
+// unlockDashboard() is called by the inline doLogin() in admin.html
+// after password check – and also on session restore below.
 
 function unlockDashboard() {
-  // 1. Supabase CDN check
   if (typeof window.supabase === 'undefined') {
     var gErr = document.getElementById('gate-error');
-    if (gErr) { gErr.textContent = 'Fehler: Supabase-CDN nicht geladen. Bitte Seite neu laden.'; gErr.style.display = 'block'; }
+    if (gErr) { gErr.textContent = 'Fehler: Supabase-CDN nicht geladen. Seite neu laden.'; gErr.style.display = 'block'; }
     return;
   }
-
-  // 2. Create client
   try {
     _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   } catch (e) {
@@ -94,12 +89,10 @@ function unlockDashboard() {
     return;
   }
 
-  // 3. Show dashboard
   document.getElementById('admin-gate').style.display      = 'none';
   document.getElementById('admin-dashboard').style.display = 'block';
   sessionStorage.setItem('lorenz-admin', '1');
 
-  // 4. Render calendar immediately (empty), then load data
   try { renderCalendar(); } catch (e) { showError('Kalender-Fehler: ' + e.message); }
   loadAll();
 }
@@ -109,9 +102,7 @@ function logout() {
   location.reload();
 }
 
-// Auto-session restore.
-// admin.js is loaded at the bottom of <body>, so the DOM is already parsed.
-// We do NOT need a load/DOMContentLoaded wrapper here.
+// Session-Wiederherstellung nach Seiten-Reload
 if (sessionStorage.getItem('lorenz-admin') === '1') {
   unlockDashboard();
 }
@@ -119,17 +110,14 @@ if (sessionStorage.getItem('lorenz-admin') === '1') {
 // ── DATA LOADING ──────────────────────────────────────────
 
 async function loadAll() {
-  if (!_sb) { showError('Kein Supabase-Client. Bitte neu einloggen.'); return; }
+  if (!_sb) return;
   showInfo('Buchungen werden geladen…');
 
-  // Bookings
   try {
-    var bRes = await _sb
-      .from('bookings')
-      .select('*')
-      .order('event_date', { ascending: true });
+    var bRes = await _sb.from('bookings').select('*').order('event_date', { ascending: true });
     if (bRes.error) {
-      showError('Fehler beim Laden der Buchungen: ' + bRes.error.message);
+      showError('Fehler beim Laden der Buchungen: ' + bRes.error.message
+        + ' → Bitte SQL-Fix-Skript in Supabase ausführen!');
     } else {
       allBookings = bRes.data || [];
     }
@@ -137,16 +125,13 @@ async function loadAll() {
     showError('Netzwerkfehler (Buchungen): ' + e.message);
   }
 
-  // Blocked dates — separate query so a bookings error doesn't break this
   try {
     var dRes = await _sb.from('blocked_dates').select('date');
-    if (dRes.error) {
-      console.warn('[admin] blocked_dates:', dRes.error.message);
-    } else {
+    if (!dRes.error) {
       allBlocked = (dRes.data || []).map(function (r) { return r.date; });
     }
   } catch (e) {
-    console.warn('[admin] blocked_dates network error:', e.message);
+    console.warn('[admin] blocked_dates:', e.message);
   }
 
   showInfo('');
@@ -196,14 +181,12 @@ function nextMonth() {
 function renderCalendar() {
   var grid  = document.getElementById('admin-cal-grid');
   var label = document.getElementById('month-label');
-  if (!grid)  { console.warn('[admin] #admin-cal-grid not found'); return; }
-  if (!label) { console.warn('[admin] #month-label not found'); return; }
+  if (!grid || !label) return;
 
   var MONTHS = ['Januar','Februar','März','April','Mai','Juni',
                 'Juli','August','September','Oktober','November','Dezember'];
   label.textContent = MONTHS[curMonth] + ' ' + curYear;
 
-  // Build date→bookings map
   var bookingMap = {};
   for (var i = 0; i < allBookings.length; i++) {
     var b = allBookings[i];
@@ -213,19 +196,16 @@ function renderCalendar() {
   }
 
   var firstDay    = new Date(curYear, curMonth, 1);
-  var startOffset = (firstDay.getDay() + 6) % 7; // Mon = 0
+  var startOffset = (firstDay.getDay() + 6) % 7;
   var daysInMonth = new Date(curYear, curMonth + 1, 0).getDate();
   var today       = new Date();
   var todayStr    = today.getFullYear() + '-' + pad2(today.getMonth() + 1) + '-' + pad2(today.getDate());
 
   var html = '';
-
-  // Empty leading cells
   for (var e = 0; e < startOffset; e++) {
     html += '<div class="cal-cell empty"></div>';
   }
 
-  // Day cells
   for (var d = 1; d <= daysInMonth; d++) {
     var dateStr  = curYear + '-' + pad2(curMonth + 1) + '-' + pad2(d);
     var dayBooks = bookingMap[dateStr] || [];
@@ -283,7 +263,6 @@ function selectDay(dateStr) {
 
   renderDayDetail(dateStr);
 
-  // Mobile: slide up
   var detail   = document.getElementById('day-detail');
   var backdrop = document.getElementById('detail-backdrop');
   if (detail)   detail.classList.add('open');
@@ -330,7 +309,7 @@ function renderDayDetail(dateStr) {
         + '<div class="booking-info-item"><label>Personen</label><span>' + esc(b.guest_count) + '</span></div>'
         + '<div class="booking-info-item"><label>E-Mail</label><span><a href="mailto:' + esc(b.email) + '">' + esc(b.email) + '</a></span></div>'
         + '<div class="booking-info-item"><label>Telefon</label><span><a href="tel:' + esc(b.phone) + '">' + esc(b.phone) + '</a></span></div>'
-        + (b.event_location ? '<div class="booking-info-item span-2"><label>Veranstaltungsort</label><span>' + esc(b.event_location) + '</span></div>' : '')
+        + (b.event_location ? '<div class="booking-info-item bii-full"><label>Ort</label><span>' + esc(b.event_location) + '</span></div>' : '')
       + '</div>'
       + (b.message ? '<div class="booking-msg">"' + esc(b.message) + '"</div>' : '')
       + '<div class="booking-actions">'
@@ -348,8 +327,15 @@ async function updateStatus(id, newStatus) {
   if (!_sb) { showError('Kein Supabase-Client.'); return; }
   showInfo('Status wird gespeichert…');
   try {
-    var res = await _sb.from('bookings').update({ status: newStatus }).eq('id', id);
-    if (res.error) { showError('Fehler: ' + res.error.message); return; }
+    var res = await _sb.from('bookings').update({ status: newStatus }).eq('id', id).select();
+    if (res.error) {
+      showError('Fehler: ' + res.error.message + ' → SQL-Fix-Skript in Supabase ausführen!');
+      return;
+    }
+    if (!res.data || res.data.length === 0) {
+      showError('Keine Datenbankberechtigung! Bitte das SQL-Fix-Skript (supabase-setup.sql) in Supabase ausführen.');
+      return;
+    }
     for (var i = 0; i < allBookings.length; i++) {
       if (allBookings[i].id === id) { allBookings[i].status = newStatus; break; }
     }
@@ -376,12 +362,20 @@ async function doToggleBlock(dateStr) {
   showInfo(isBlocked ? 'Tag wird freigegeben…' : 'Tag wird gesperrt…');
   try {
     if (isBlocked) {
-      var r = await _sb.from('blocked_dates').delete().eq('date', dateStr);
-      if (r.error) { showError('Fehler: ' + r.error.message); return; }
+      var r = await _sb.from('blocked_dates').delete().eq('date', dateStr).select();
+      if (r.error) { showError('Fehler: ' + r.error.message + ' → SQL-Fix-Skript ausführen!'); return; }
+      if (!r.data || r.data.length === 0) {
+        showError('Keine Berechtigung! Bitte das SQL-Fix-Skript in Supabase ausführen.');
+        return;
+      }
       allBlocked = allBlocked.filter(function (d) { return d !== dateStr; });
     } else {
-      var r2 = await _sb.from('blocked_dates').insert([{ date: dateStr }]);
-      if (r2.error) { showError('Fehler: ' + r2.error.message); return; }
+      var r2 = await _sb.from('blocked_dates').insert([{ date: dateStr }]).select();
+      if (r2.error) { showError('Fehler: ' + r2.error.message + ' → SQL-Fix-Skript ausführen!'); return; }
+      if (!r2.data || r2.data.length === 0) {
+        showError('Keine Berechtigung! Bitte das SQL-Fix-Skript in Supabase ausführen.');
+        return;
+      }
       allBlocked.push(dateStr);
     }
     showInfo('');

@@ -80,7 +80,47 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// Buchungsformular
+// ── VERFÜGBARKEIT ─────────────────────────────────────────────
+// Gebuchte und gesperrte Tage vorladen, damit Kunden sofort
+// sehen welche Daten bereits vergeben sind.
+
+let _takenDates = [];
+
+async function loadAvailability() {
+  if (typeof SUPABASE_URL === 'undefined' || SUPABASE_URL === 'DEINE_SUPABASE_URL') return;
+  try {
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const [blockedRes, bookedRes] = await Promise.all([
+      sb.from('blocked_dates').select('date'),
+      sb.from('bookings').select('event_date').eq('status', 'confirmed'),
+    ]);
+    const blockedList = (blockedRes.data || []).map(r => r.date);
+    const bookedList  = (bookedRes.data  || []).map(r => r.event_date);
+    _takenDates = [...new Set([...blockedList, ...bookedList])];
+
+    const dateInput = document.getElementById('event_date');
+    if (dateInput) dateInput.addEventListener('change', checkDateAvailability);
+  } catch (e) {
+    // Nicht kritisch – Formular funktioniert auch ohne Verfügbarkeitscheck
+  }
+}
+
+function checkDateAvailability() {
+  const val    = document.getElementById('event_date')?.value;
+  const msgBox = document.getElementById('form-message');
+  if (!val || !msgBox) return;
+
+  if (_takenDates.includes(val)) {
+    msgBox.textContent = '⚠️ Dieser Tag ist leider bereits belegt oder gesperrt. Bitte wähle ein anderes Datum.';
+    msgBox.className   = 'form-message error';
+  } else if (msgBox.classList.contains('error') && msgBox.textContent.includes('belegt')) {
+    msgBox.textContent = '';
+    msgBox.className   = 'form-message';
+  }
+}
+
+// ── BUCHUNGSFORMULAR ──────────────────────────────────────────
+
 const form      = document.getElementById('booking-form');
 const submitBtn = document.getElementById('submit-btn');
 const msgBox    = document.getElementById('form-message');
@@ -90,6 +130,13 @@ form.addEventListener('submit', async (e) => {
 
   if (SUPABASE_URL === 'DEINE_SUPABASE_URL' || SUPABASE_ANON_KEY === 'DEIN_ANON_KEY') {
     showMessage('Bitte trage zuerst deine Supabase-Zugangsdaten in config.js ein.', 'error');
+    return;
+  }
+
+  // Belegten Tag vor dem Absenden nochmals prüfen
+  const chosenDate = form.event_date.value;
+  if (chosenDate && _takenDates.includes(chosenDate)) {
+    showMessage('⚠️ Dieser Tag ist bereits belegt oder gesperrt. Bitte wähle ein anderes Datum.', 'error');
     return;
   }
 
@@ -112,7 +159,15 @@ form.addEventListener('submit', async (e) => {
     message:        form.message.value.trim() || null,
   };
 
-  const { error } = await supabase.from('bookings').insert([payload]);
+  let { error } = await supabase.from('bookings').insert([payload]);
+
+  // Fallback: Wenn PostgREST event_location nicht kennt (Schema-Cache-Problem)
+  if (error && error.message && error.message.includes('event_location')) {
+    const fallback = { ...payload };
+    delete fallback.event_location;
+    const retry = await supabase.from('bookings').insert([fallback]);
+    error = retry.error;
+  }
 
   if (error) {
     showMessage(`Fehler beim Senden: ${error.message}`, 'error');
@@ -120,6 +175,7 @@ form.addEventListener('submit', async (e) => {
   } else {
     showMessage('Anfrage erfolgreich! Ich melde mich innerhalb von 24 Stunden bei dir.', 'success');
     form.reset();
+    if (chosenDate) _takenDates.push(chosenDate);
   }
 
   submitBtn.disabled    = false;
@@ -129,4 +185,11 @@ form.addEventListener('submit', async (e) => {
 function showMessage(text, type) {
   msgBox.textContent = text;
   msgBox.className   = `form-message ${type}`;
+}
+
+// Verfügbarkeit laden sobald DOM bereit ist
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', loadAvailability);
+} else {
+  loadAvailability();
 }
