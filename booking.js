@@ -80,47 +80,6 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// Buchungsformular – Datumsverfügbarkeit
-var _unavailableDates = [];
-var _bookingSb = null;
-
-(function initAvailability() {
-  if (typeof SUPABASE_URL === 'undefined' || SUPABASE_URL === 'DEINE_SUPABASE_URL') return;
-  try {
-    _bookingSb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  } catch (e) { return; }
-
-  Promise.all([
-    _bookingSb.from('blocked_dates').select('date'),
-    _bookingSb.from('bookings').select('event_date').eq('status', 'confirmed')
-  ]).then(function (results) {
-    var blockedRes   = results[0];
-    var confirmedRes = results[1];
-    if (!blockedRes.error && blockedRes.data) {
-      blockedRes.data.forEach(function (r) { _unavailableDates.push(r.date); });
-    }
-    if (!confirmedRes.error && confirmedRes.data) {
-      confirmedRes.data.forEach(function (r) {
-        if (_unavailableDates.indexOf(r.event_date) === -1) _unavailableDates.push(r.event_date);
-      });
-    }
-  }).catch(function () {});
-}());
-
-// Warnhinweis-Element am Datumsfeld
-var _dateInput = document.getElementById('event_date');
-if (_dateInput) {
-  var _dateWarn = document.createElement('p');
-  _dateWarn.style.cssText = 'color:#F87171;font-size:0.85rem;margin-top:6px;display:none;font-weight:600;';
-  _dateWarn.textContent = '⚠ Dieser Tag ist bereits vergeben oder gesperrt. Bitte ein anderes Datum wählen.';
-  _dateInput.parentNode.appendChild(_dateWarn);
-
-  _dateInput.addEventListener('change', function () {
-    _dateWarn.style.display = (_dateInput.value && _unavailableDates.indexOf(_dateInput.value) !== -1)
-      ? 'block' : 'none';
-  });
-}
-
 // Buchungsformular
 const form      = document.getElementById('booking-form');
 const submitBtn = document.getElementById('submit-btn');
@@ -134,19 +93,12 @@ form.addEventListener('submit', async (e) => {
     return;
   }
 
-  // Block submission on unavailable date
-  const chosenDate = form.event_date.value;
-  if (chosenDate && _unavailableDates.indexOf(chosenDate) !== -1) {
-    showMessage('Dieser Tag ist bereits vergeben oder gesperrt. Bitte ein anderes Datum wählen.', 'error');
-    return;
-  }
-
   submitBtn.disabled    = true;
   submitBtn.textContent = 'Wird gesendet …';
   msgBox.className      = 'form-message';
   msgBox.textContent    = '';
 
-  const supabase = _bookingSb || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   const payload = {
     name:           form.name.value.trim(),
@@ -163,8 +115,7 @@ form.addEventListener('submit', async (e) => {
   const { error } = await supabase.from('bookings').insert([payload]);
 
   if (error) {
-    const detail = error.message || JSON.stringify(error);
-    showMessage(`Fehler beim Senden: ${detail}`, 'error');
+    showMessage(`Fehler beim Senden: ${error.message}`, 'error');
     console.error(error);
   } else {
     showMessage('Anfrage erfolgreich! Ich melde mich innerhalb von 24 Stunden bei dir.', 'success');
