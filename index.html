@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DJ Lorenz – Dein DJ für unvergessliche Events</title>
-  <meta name="description" content="DJ Lorenz – Hochzeiten, Geburtstage, Clubs und Corporate Events. Jetzt buchen!">
+  <title>DJ Adler – Partys, Geburtstage & mehr</title>
+  <meta name="description" content="DJ Adler (Lorenz) aus Oberkassel – House, White Girl Music, Partyklassiker & Deutschrap. Buchung für Partys, Geburtstage und Events.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -14,121 +14,428 @@
 
   <!-- ── NAVIGATION ── -->
   <nav class="navbar" id="navbar">
-    <a href="#" class="nav-logo">LORENZ</a>
-    <ul class="nav-links">
+    <a href="#" class="nav-logo">
+      <img src="05_GRAFIK_Adler/adler.png" alt="" class="nav-eagle" onerror="this.style.display='none'">
+      DJ ADLER
+    </a>
+    <ul class="nav-links" id="nav-links">
       <li><a href="#about">Über mich</a></li>
-      <li><a href="#services">Events</a></li>
+      <li><a href="#equipment">Equipment</a></li>
+      <li><a href="#preise">Preise</a></li>
+      <li><a href="#events">Events</a></li>
+      <li><a href="#anfahrt">Anfahrt</a></li>
       <li><a href="#booking">Buchen</a></li>
     </ul>
-    <a href="#booking" class="btn btn-primary btn-sm">Jetzt Buchen</a>
+    <div class="nav-right">
+      <a href="#booking" class="btn btn-primary btn-sm nav-cta">Jetzt Buchen</a>
+      <button class="nav-hamburger" id="nav-hamburger" aria-label="Menü öffnen" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
   </nav>
 
   <!-- ── HERO ── -->
   <section class="hero" id="hero">
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
-    <div class="blob blob-3"></div>
-    <div class="hero-content">
-      <p class="hero-eyebrow">DJ &middot; Events &middot; Vibes</p>
-      <h1 class="hero-title">LORENZ</h1>
-      <p class="hero-sub">
-        Dein DJ für unvergessliche Momente –<br>
-        von der Hochzeit bis zum Club.
-      </p>
-      <div class="hero-actions">
-        <a href="#booking" class="btn btn-primary">Jetzt Buchen</a>
-        <a href="#services" class="btn btn-outline">Mehr erfahren</a>
+    <div class="hero-media">
+      <!--
+        VIDEO: Eigenes DJ-Video hier einfügen.
+        Einfach src="hero.mp4" auf den eigenen Dateinamen ändern.
+        Das Poster-Bild (poster="hero-poster.jpg") wird angezeigt solange das Video lädt.
+      -->
+      <video class="hero-video" autoplay muted loop playsinline poster="01_VIDEO_Hero/poster.jpg">
+        <source src="01_VIDEO_Hero/hero.mp4" type="video/mp4">
+      </video>
+      <div class="hero-overlay"></div>
+    </div>
+
+    <!-- Großer Adler als Hintergrund-Element -->
+    <div class="hero-eagle" aria-hidden="true">
+      <img src="05_GRAFIK_Adler/adler.png" alt="" style="width:100%;height:100%;object-fit:contain;" onerror="this.style.display='none'">
+    </div>
+    <div class="container hero-inner">
+      <div class="hero-left">
+        <p class="hero-eyebrow">🦅 DJ Adler &middot; Partys &middot; Events</p>
+        <h1 class="hero-title"><span>A</span><span>D</span><span>L</span><span>E</span><span>R</span></h1>
+        <p class="hero-tagline">
+          DJ aus Oberkassel –<br>
+          House, White Girl Music, Partyklassiker &amp; Deutschrap.
+        </p>
+        <div class="hero-actions">
+          <a href="#booking" class="btn btn-primary">Jetzt Buchen</a>
+          <a href="#preise" class="btn btn-outline">Preise ansehen</a>
+        </div>
+        <div class="hero-quick">
+          <div class="quick-item">
+            <span class="quick-label">Standort</span>
+            <span>Oberkassel, Düsseldorf</span>
+          </div>
+          <div class="quick-item">
+            <span class="quick-label">Telefon</span>
+            <a href="tel:+49123456789">+49 123 456789</a>
+          </div>
+          <div class="quick-item">
+            <span class="quick-label">Antwort</span>
+            <span>innerhalb 24h</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-right">
+        <div class="hero-card">
+          <div class="hc-row">
+            <span class="hc-label">Events gespielt</span>
+            <span class="hc-val" data-counter="50" data-suffix="+">50+</span>
+          </div>
+          <div class="hc-divider"></div>
+          <div class="hc-row">
+            <span class="hc-label">Als DJ aktiv</span>
+            <span class="hc-val">3 Jahre</span>
+          </div>
+          <div class="hc-divider"></div>
+          <div class="hc-row">
+            <span class="hc-label">Reichweite</span>
+            <span class="hc-val">bis 100 km</span>
+          </div>
+          <div class="hc-divider"></div>
+          <div class="hc-row">
+            <span class="hc-label">Nächste Buchung</span>
+            <span class="hc-val">auf Anfrage</span>
+          </div>
+          <a href="#booking" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:28px">
+            Datum anfragen
+          </a>
+        </div>
       </div>
     </div>
-    <div
-      class="scroll-indicator"
-      onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'})"
-      aria-label="Nach unten scrollen"
-    >↓</div>
   </section>
 
-  <!-- ── ABOUT ── -->
+  <!-- ── ÜBER MICH ── -->
   <section class="about" id="about">
     <div class="container">
+      <div class="section-header" data-reveal>
+        <span class="section-tag">Über mich</span>
+        <h2>Wer steckt hinter den Decks?</h2>
+      </div>
       <div class="about-grid">
-        <div class="about-text">
-          <span class="section-tag">Über mich</span>
-          <h2 class="section-title">Musik, die verbindet.</h2>
-          <p>
-            Ich bin Lorenz – DJ aus Leidenschaft. Mit über 5 Jahren Erfahrung
-            auf Hochzeiten, Geburtstagen, Firmenevents und Clubs weiß ich, wie
-            man jeden Raum zum Kochen bringt. Mein Ziel ist einfach: dass jeder
-            Gast am Ende sagt – <em>das war eine geile Party.</em>
+        <div class="about-left" data-reveal data-reveal-delay="1">
+          <p class="about-lead">
+            Ich bin Lorenz, 16 Jahre alt – als DJ bekannt unter dem Namen DJ Adler 🦅. Seit ein paar Jahren leg ich auf
+            verschiedenen Partys und Veranstaltungen auf – Geburtstage, Schulpartys, Jugendclubs
+            und Stadtfeste.
           </p>
-          <div class="stats">
-            <div class="stat">
-              <span class="stat-num">200+</span>
-              <span class="stat-label">Events</span>
+          <p>
+            Ich kenne die Musik die gerade läuft. Ob House, White Girl Music, Partyklassiker
+            oder Deutschrap – ich spiel das was die Leute hören wollen und passe mich dem
+            Publikum an.
+          </p>
+          <p>
+            Musikwünsche sind immer willkommen. Schick mir vor dem Event gerne eine Liste und
+            ich bau sie mit ein.
+          </p>
+          <div class="about-facts">
+            <div class="fact-row">
+              <span class="fact-key">Alter</span>
+              <span class="fact-val">16 Jahre</span>
             </div>
-            <div class="stat">
-              <span class="stat-num">5+</span>
-              <span class="stat-label">Jahre</span>
+            <div class="fact-row">
+              <span class="fact-key">Standort</span>
+              <span class="fact-val">Oberkassel, Düsseldorf &amp; Umgebung</span>
             </div>
-            <div class="stat">
-              <span class="stat-num">100%</span>
-              <span class="stat-label">Herzblut</span>
+            <div class="fact-row">
+              <span class="fact-key">Genres</span>
+              <span class="fact-val">House · White Girl Music · Partyklassiker · Deutschrap</span>
+            </div>
+            <div class="fact-row">
+              <span class="fact-key">Buchungsweg</span>
+              <span class="fact-val">Formular unten oder direkt per Telefon</span>
+            </div>
+            <div class="fact-row">
+              <span class="fact-key">Stornierung</span>
+              <span class="fact-val">Bis 2 Wochen vorher kostenfrei</span>
             </div>
           </div>
         </div>
-        <div class="about-visual">
-          <div class="visual-card">
-            <div class="visual-card-inner">♪</div>
-          </div>
+        <div class="about-photo" data-reveal data-reveal-delay="2">
+          <img src="02_FOTO_Profil/profil.jpg" alt="Lorenz – DJ Adler" onerror="this.style.display='none'">
+          <div class="photo-placeholder">📁 02_FOTO_Profil / profil.jpg</div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ── SERVICES ── -->
-  <section class="services" id="services">
+  <!-- ── EQUIPMENT & TECHNIK ── -->
+  <section class="equipment" id="equipment">
     <div class="container">
-      <span class="section-tag center">Was ich biete</span>
-      <h2 class="section-title center">Events &amp; Anlässe</h2>
-      <div class="services-grid">
+      <div class="section-header" data-reveal>
+        <span class="section-tag">Technik</span>
+        <h2>Equipment &amp; Technik</h2>
+        <p class="section-sub">
+          Alles was ich mitbringe ist professionelle Hardware.
+          Auf- und Abbau sind immer inklusive.
+        </p>
+      </div>
+      <div class="equip-photo-wrap" data-reveal>
+        <img src="04_FOTO_Setup/setup.jpg" alt="DJ Setup – Lorenz" class="equip-photo" onerror="this.style.display='none'">
+        <div class="equip-photo-placeholder">📁 04_FOTO_Setup / setup.jpg</div>
+      </div>
+      <div class="equipment-grid">
+        <div class="equip-card" data-reveal data-reveal-delay="1">
+          <h3>DJ-Controller</h3>
+          <p>Pioneer DDJ-1000<br>4-Kanal, professionell</p>
+        </div>
+        <div class="equip-card" data-reveal data-reveal-delay="2">
+          <h3>Lautsprecher</h3>
+          <p>2× RCF Art 745-A<br>je 1.400 W, aktiv</p>
+        </div>
+        <div class="equip-card" data-reveal data-reveal-delay="3">
+          <h3>Subwoofer</h3>
+          <p>RCF Sub 705-AS II<br>1.000 W (zubuchbar)</p>
+        </div>
+        <div class="equip-card" data-reveal data-reveal-delay="4">
+          <h3>Lichtanlage</h3>
+          <p>Moving Heads, LED-Bar<br>Laser &amp; Stroboskop</p>
+        </div>
+        <div class="equip-card" data-reveal data-reveal-delay="5">
+          <h3>Mikrofon</h3>
+          <p>Shure SM58 Funk<br>Ansagen &amp; Moderation</p>
+        </div>
+        <div class="equip-card" data-reveal data-reveal-delay="6">
+          <h3>Software</h3>
+          <p>Serato DJ Pro<br>Rekordbox-kompatibel</p>
+        </div>
+      </div>
+      <p class="equip-note">
+        * Für größere Events oder Open Air ist eine größere Anlage nötig – auf Anfrage buchbar.
+      </p>
+    </div>
+  </section>
 
-        <div class="service-card">
-          <span class="service-icon">💍</span>
-          <h3>Hochzeiten</h3>
-          <p>Euer perfekter Soundtrack für den schönsten Tag – von der Trauung bis zum letzten Tanz.</p>
+  <!-- ── PREISE ── -->
+  <section class="preise" id="preise">
+    <div class="container">
+      <div class="section-header" data-reveal>
+        <span class="section-tag">Pakete</span>
+        <h2>Preise &amp; Pakete</h2>
+        <p class="section-sub">
+          Transparente Preise ohne versteckte Kosten.
+          Anfahrt bis 5 km kostenlos – danach 2 €/km.
+        </p>
+      </div>
+      <div class="preise-grid">
+
+        <div class="preis-card" data-reveal data-reveal-delay="1">
+          <div class="preis-head">
+            <h3>Small</h3>
+            <div class="preis-val">ab 80 €</div>
+          </div>
+          <div class="preis-desc">Kleine Partys und Geburtstage bis ca. 50 Personen.</div>
+          <ul class="preis-list">
+            <li>Bis 3 Stunden</li>
+            <li>Bis ~50 Personen</li>
+            <li>DJ-Anlage inklusive</li>
+            <li>Musikwünsche möglich</li>
+            <li>Auf- &amp; Abbau inklusive</li>
+          </ul>
+          <a href="#booking" class="btn btn-outline" style="width:100%;justify-content:center;">Anfragen</a>
         </div>
 
-        <div class="service-card">
-          <span class="service-icon">🎂</span>
-          <h3>Geburtstage</h3>
-          <p>Partys, die man so schnell nicht vergisst. Ich bring die Musik, du bringst die Leute.</p>
+        <div class="preis-card preis-highlight" data-reveal data-reveal-delay="2">
+          <div class="preis-badge">Beliebt</div>
+          <div class="preis-head">
+            <h3>Standard</h3>
+            <div class="preis-val">ab 150 €</div>
+          </div>
+          <div class="preis-desc">Geburtstage, Schulpartys und mittlere Events.</div>
+          <ul class="preis-list">
+            <li>Bis 5 Stunden</li>
+            <li>Bis ~150 Personen</li>
+            <li>DJ-Anlage + Subwoofer</li>
+            <li>Basis-Lichtanlage</li>
+            <li>Musikwünsche inklusive</li>
+            <li>Kurzes Vorgespräch</li>
+          </ul>
+          <a href="#booking" class="btn btn-primary" style="width:100%;justify-content:center;">Anfragen</a>
         </div>
 
-        <div class="service-card">
-          <span class="service-icon">🏢</span>
-          <h3>Corporate Events</h3>
-          <p>Professionelle Unterhaltung für Firmenfeiern, Teamevents und Produktpräsentationen.</p>
+        <div class="preis-card" data-reveal data-reveal-delay="3">
+          <div class="preis-head">
+            <h3>Premium</h3>
+            <div class="preis-val">ab 300 €</div>
+          </div>
+          <div class="preis-desc">Ganzer Abend mit voller Technik und Lichtshow.</div>
+          <ul class="preis-list">
+            <li>Bis 7 Stunden</li>
+            <li>Bis ~300 Personen</li>
+            <li>Vollständige DJ-Anlage</li>
+            <li>Komplette Lichtshow</li>
+            <li>Playlist-Abstimmung</li>
+            <li>Vorgespräch inklusive</li>
+          </ul>
+          <a href="#booking" class="btn btn-outline" style="width:100%;justify-content:center;">Anfragen</a>
         </div>
 
-        <div class="service-card">
-          <span class="service-icon">🎉</span>
-          <h3>Clubs &amp; Partys</h3>
-          <p>Energie pur auf der Tanzfläche. Von House über Hip-Hop bis Techno – ich kenn mein Publikum.</p>
-        </div>
+      </div>
+      <p class="preise-note">
+        Alle Preise sind Richtwerte. Der genaue Preis hängt von Dauer, Entfernung und
+        gebuchten Extras ab. Nach deiner Anfrage kriegst du ein konkretes Angebot.
+      </p>
+    </div>
+  </section>
 
+  <!-- ── EVENTS & ANLÄSSE ── -->
+  <section class="events" id="events">
+    <div class="container">
+      <div class="section-header" data-reveal>
+        <span class="section-tag">Anlässe</span>
+        <h2>Für welche Events buchen?</h2>
+      </div>
+      <div class="events-grid">
+        <div class="event-item" data-reveal data-reveal-delay="1">
+          <span class="event-nr">01</span>
+          <div class="event-body">
+            <h3>Geburtstage &amp; Hauspartys</h3>
+            <p>Ob privat oder in einer Halle – ich bin dabei. Musikwünsche im
+            Vorfeld schicken und ich bau sie mit ein.</p>
+          </div>
+        </div>
+        <div class="event-item" data-reveal data-reveal-delay="2">
+          <span class="event-nr">02</span>
+          <div class="event-body">
+            <h3>Schulpartys &amp; Abifeiern</h3>
+            <p>Erfahrung mit Schülerveranstaltungen. Ich kenne den Mix der
+            funktioniert und der alle mitreißt.</p>
+          </div>
+        </div>
+        <div class="event-item" data-reveal data-reveal-delay="3">
+          <span class="event-nr">03</span>
+          <div class="event-body">
+            <h3>Jugendclubs &amp; Clubnächte</h3>
+            <p>Regelmäßige Sets oder Einzel-Events. Von House und Techno bis
+            Hip-Hop – je nach Publikum.</p>
+          </div>
+        </div>
+        <div class="event-item" data-reveal data-reveal-delay="4">
+          <span class="event-nr">04</span>
+          <div class="event-body">
+            <h3>Stadtfeste &amp; Open Air</h3>
+            <p>Outdoor-Erfahrung vorhanden. Wetterfeste Anlage auf Anfrage
+            buchbar. Strom muss vor Ort vorhanden sein.</p>
+          </div>
+        </div>
+        <div class="event-item" data-reveal data-reveal-delay="5">
+          <span class="event-nr">05</span>
+          <div class="event-body">
+            <h3>Sportveranstaltungen &amp; Vereinsfeste</h3>
+            <p>Turniere, Vereinsfeiern, Sportevents. Ich passe den Musikstil
+            der Veranstaltung an.</p>
+          </div>
+        </div>
+        <div class="event-item" data-reveal data-reveal-delay="6">
+          <span class="event-nr">06</span>
+          <div class="event-body">
+            <h3>Sonstige Partys</h3>
+            <p>Etwas anderes geplant? Einfach anfragen. Wenn es passt, bin
+            ich dabei.</p>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- ── BOOKING ── -->
+  <!-- ── FOTO-BREAK ── -->
+  <div class="photo-break">
+    <img src="03_FOTO_Break/break.jpg" alt="Atmosphäre – DJ Adler" class="photo-break-img" onerror="this.style.display='none'">
+    <div class="photo-break-placeholder">📁 03_FOTO_Break / break.jpg</div>
+    <div class="photo-break-overlay"></div>
+  </div>
+
+  <!-- ── ANFAHRT ── -->
+  <section class="anfahrt" id="anfahrt">
+    <div class="container">
+      <div class="section-header" data-reveal>
+        <span class="section-tag">Anfahrt</span>
+        <h2>Standort &amp; Reichweite</h2>
+        <p class="section-sub">
+          Ansässig in Oberkassel, Düsseldorf. Anfahrt bis 5 km kostenlos – ab 5 km: 2 €/km.
+        </p>
+      </div>
+      <div class="anfahrt-grid">
+        <div class="anfahrt-info" data-reveal data-reveal-delay="1">
+          <div class="anfahrt-block">
+            <h3>Standort</h3>
+            <p>Oberkassel<br>Düsseldorf, Deutschland</p>
+            <!-- Ersetze Oberkassel und Düsseldorf mit dem echten Stadtteil/Stadt -->
+          </div>
+          <div class="anfahrt-block">
+            <h3>Kontakt</h3>
+            <p>
+              <span class="contact-label">Telefon</span>
+              <a href="tel:+49123456789">+49 123 456789</a>
+            </p>
+            <p>
+              <span class="contact-label">E-Mail</span>
+              <a href="mailto:info@dj-lorenz.de">info@dj-lorenz.de</a>
+            </p>
+            <p>
+              <span class="contact-label">Instagram</span>
+              <a href="https://www.instagram.com/lorenz.jlch" target="_blank" rel="noopener">@lorenz.jlch</a>
+            </p>
+            <p>
+              <span class="contact-label">Erreichbar</span>
+              Mo–Sa, 12–20 Uhr
+            </p>
+          </div>
+          <div class="anfahrt-block">
+            <h3>Fahrtkosten</h3>
+            <div class="rw-table">
+              <div class="rw-row">
+                <span>Bis 5 km</span>
+                <span class="rw-badge rw-gratis">kostenlos</span>
+              </div>
+              <div class="rw-row">
+                <span>Ab 5 km</span>
+                <span class="rw-badge rw-kosten">2 €/km</span>
+              </div>
+              <div class="rw-row">
+                <span>Ab 50 km</span>
+                <span class="rw-badge rw-anfrage">auf Anfrage</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="anfahrt-map" data-reveal data-reveal-delay="2">
+          <!--
+            Ersetze "Kreuzberg,Berlin" in der src mit deinem Stadtteil+Stadt.
+            z=14 ist der Zoom-Level (höher = näher).
+          -->
+          <iframe
+            src="https://maps.google.com/maps?q=Oberkassel,Düsseldorf,Deutschland&z=14&output=embed&hl=de"
+            width="100%"
+            height="100%"
+            style="border:0;min-height:400px;display:block;"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            title="Standort auf der Karte"
+          ></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── BUCHUNG ── -->
   <section class="booking" id="booking">
     <div class="container">
-      <span class="section-tag center">Buchung</span>
-      <h2 class="section-title center">Lass uns was planen.</h2>
-      <p class="section-sub center">
-        Füll das Formular aus – ich meld mich innerhalb von 24&nbsp;Stunden bei dir.
-      </p>
-
-      <form class="booking-form" id="booking-form" novalidate>
+      <div class="section-header" data-reveal>
+        <span class="section-tag">Buchung</span>
+        <h2>Jetzt anfragen.</h2>
+        <p class="section-sub">
+          Füll das Formular aus – ich melde mich innerhalb von 24 Stunden.
+          Oder ruf einfach an: <a href="tel:+49123456789">+49 123 456789</a>
+        </p>
+      </div>
+      <form class="booking-form" id="booking-form" novalidate data-reveal data-reveal-delay="1">
         <div class="form-grid">
           <div class="form-group">
             <label for="name">Name *</label>
@@ -151,12 +458,24 @@
             <input type="date" id="event_date" name="event_date" required>
           </div>
           <div class="form-group">
-            <label for="event_time">Uhrzeit *</label>
-            <input type="time" id="event_time" name="event_time" required>
+            <label>Uhrzeit *</label>
+            <div class="time-range">
+              <input type="time" id="event_time" name="event_time" required>
+              <span class="time-sep">bis</span>
+              <input type="time" id="event_time_end" name="event_time_end">
+            </div>
           </div>
           <div class="form-group full">
-            <label for="message">Nachricht</label>
-            <textarea id="message" name="message" placeholder="Erzähl mir von deinem Event – was hast du dir vorgestellt?"></textarea>
+            <label for="event_location">Veranstaltungsort</label>
+            <input type="text" id="event_location" name="event_location" placeholder="z.B. Gaststätte Musterstraße 12, Düsseldorf">
+          </div>
+          <div class="form-group full">
+            <label for="message">Details zum Event</label>
+            <textarea
+              id="message"
+              name="message"
+              placeholder="Was für eine Party? Musikwünsche oder spezielle Anforderungen?"
+            ></textarea>
           </div>
         </div>
         <div class="form-submit">
@@ -172,15 +491,49 @@
   <!-- ── FOOTER ── -->
   <footer class="footer">
     <div class="container">
-      <div class="footer-inner">
-        <span class="footer-logo">LORENZ</span>
-        <p class="footer-copy">© 2024 DJ Lorenz. Alle Rechte vorbehalten.</p>
+      <div class="footer-top">
+        <div class="footer-brand">
+          <img src="05_GRAFIK_Adler/adler.png" alt="" class="footer-eagle-svg" onerror="this.style.display='none'">
+          <span class="footer-logo">DJ ADLER</span>
+          <p>Lorenz · DJ aus Oberkassel –<br>House, White Girl Music, Partyklassiker, Deutschrap.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="#about">Über mich</a></li>
+            <li><a href="#equipment">Equipment</a></li>
+            <li><a href="#preise">Preise</a></li>
+            <li><a href="#events">Events</a></li>
+            <li><a href="#anfahrt">Anfahrt</a></li>
+            <li><a href="#booking">Buchen</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Kontakt</h4>
+          <ul>
+            <li><a href="tel:+49123456789">+49 123 456789</a></li>
+            <li><a href="mailto:info@dj-lorenz.de">info@dj-lorenz.de</a></li>
+            <li><a href="https://www.instagram.com/lorenz.jlch" target="_blank" rel="noopener">Instagram: @lorenz.jlch</a></li>
+            <li>Oberkassel, Düsseldorf</li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Buchung</h4>
+          <ul>
+            <li><a href="#booking">Anfrage stellen</a></li>
+            <li><a href="#preise">Small – ab 80 €</a></li>
+            <li><a href="#preise">Standard – ab 150 €</a></li>
+            <li><a href="#preise">Premium – ab 300 €</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2025 DJ Adler | Lorenz. | <a href="#">Impressum</a> | <a href="#">Datenschutz</a></p>
         <a href="admin.html" class="footer-admin">Admin</a>
       </div>
     </div>
   </footer>
 
-  <!-- SCRIPTS -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
   <script src="booking.js"></script>

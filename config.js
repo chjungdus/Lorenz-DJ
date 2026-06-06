@@ -10,7 +10,7 @@
 //
 // ============================================================
 
-const SUPABASE_URL      = 'DEINE_SUPABASE_URL';   // z.B. https://abcdef.supabase.co
-const SUPABASE_ANON_KEY = 'DEIN_ANON_KEY';         // der "anon public" Key
+const SUPABASE_URL      = 'https://wjfjdhzvkrazuspykkuk.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqZmpkaHp2a3JhenVzcHlra3VrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1MTA5MTAsImV4cCI6MjA5NjA4NjkxMH0.yWh9MfDPpLIQvTQG4Ghal8mZjooNFOHwVSi6uSnEQ6M';
 
 const ADMIN_PASSWORD    = 'lorenz2024';             // Passwort für Admin-Seite!
