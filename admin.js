@@ -1,10 +1,11 @@
 // admin.js – Edmund Panel
 
-var _sb          = null;
-var allBookings  = [];
-var allBlocked   = [];
-var selectedDate = null;
-var curFilter    = 'all';
+var _sb           = null;
+var allBookings   = [];
+var allBlocked    = [];
+var allRecurring  = [];
+var selectedDate  = null;
+var curFilter     = 'all';
 
 var _now     = new Date();
 var curYear  = _now.getFullYear();
@@ -134,6 +135,16 @@ async function loadAll() {
     console.warn('[admin] blocked_dates:', e.message);
   }
 
+  try {
+    var rRes = await _sb.from('recurring_blocks').select('*').order('created_at', { ascending: false });
+    if (!rRes.error) {
+      allRecurring = rRes.data || [];
+      renderRecurringList();
+    }
+  } catch (e) {
+    console.warn('[admin] recurring_blocks:', e.message);
+  }
+
   showInfo('');
   updateStats();
   try { renderCalendar(); } catch (e) { showError('Kalender-Fehler: ' + e.message); }
@@ -211,20 +222,33 @@ function renderCalendar() {
     var dayBooks = bookingMap[dateStr] || [];
     var isBlocked  = allBlocked.indexOf(dateStr) !== -1;
     var isToday    = dateStr === todayStr;
-    var weekday    = new Date(curYear, curMonth, d).getDay();
-    var isWeekend  = weekday === 0 || weekday === 6;
+    var weekdayJs  = new Date(curYear, curMonth, d).getDay();
+    var weekdayMo  = (weekdayJs + 6) % 7;
+    var isWeekend  = weekdayJs === 0 || weekdayJs === 6;
     var isSelected = dateStr === selectedDate;
+
+    var isRecFull = false, isRecPart = false;
+    for (var ri = 0; ri < allRecurring.length; ri++) {
+      var rec = allRecurring[ri];
+      if (rec.type === 'weekday' && rec.weekday === weekdayMo) { isRecFull = true; break; }
+      if (rec.type === 'weekday_time' && rec.weekday === weekdayMo) isRecPart = true;
+      if (rec.type === 'date_time' && rec.specific_date === dateStr) isRecPart = true;
+    }
 
     var cls = 'cal-cell';
     if (isToday)    cls += ' today';
     if (isWeekend)  cls += ' weekend';
     if (isBlocked)  cls += ' blocked';
+    else if (isRecFull) cls += ' rec-blocked';
+    else if (isRecPart) cls += ' rec-partial';
     if (isSelected) cls += ' selected';
 
     var inner = '<span class="day-num">' + d + '</span>';
 
     if (isBlocked) {
       inner += '<span class="blocked-x">✕</span>';
+    } else if (isRecFull) {
+      inner += '<span class="blocked-x">🔁</span>';
     } else if (dayBooks.length > 0) {
       var dots = '';
       var maxDots = Math.min(dayBooks.length, 3);
@@ -452,6 +476,89 @@ async function saveNotes(id) {
     btn.textContent = '✓ Gespeichert!';
     setTimeout(function() { btn.textContent = orig; }, 1800);
   }
+}
+
+// ── RECURRING BLOCKS ─────────────────────────────────────
+
+var DAYS_DE = ['Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag','Sonntag'];
+
+function recLabel(r) {
+  var t = (r.time_from || '').slice(0,5) + '–' + (r.time_to || '').slice(0,5);
+  var base = '';
+  if (r.type === 'weekday')      base = 'Jeden ' + DAYS_DE[r.weekday] + ' – ganztags';
+  if (r.type === 'weekday_time') base = 'Jeden ' + DAYS_DE[r.weekday] + ' ' + t + ' Uhr';
+  if (r.type === 'date_time')    base = formatDate(r.specific_date) + ' – ' + t + ' Uhr';
+  return r.label ? base + ' (' + esc(r.label) + ')' : base;
+}
+
+function renderRecurringList() {
+  var el = document.getElementById('recurring-list');
+  if (!el) return;
+  if (allRecurring.length === 0) {
+    el.innerHTML = '<div class="recurring-empty">Noch keine Regeln angelegt.</div>';
+    return;
+  }
+  el.innerHTML = allRecurring.map(function(r) {
+    var typeIcon = r.type === 'weekday' ? '🔒' : '⏰';
+    return '<div class="recurring-item">'
+      + '<span class="recurring-item-icon">' + typeIcon + '</span>'
+      + '<span class="recurring-item-label">' + recLabel(r) + '</span>'
+      + '<button class="rec-delete-btn" onclick="deleteRecurring(\'' + r.id + '\')">✕</button>'
+    + '</div>';
+  }).join('');
+}
+
+function onRecTypeChange() {
+  var type = document.getElementById('rec-type').value;
+  var wdWrap = document.getElementById('rec-weekday-wrap');
+  var dtWrap = document.getElementById('rec-date-wrap');
+  var tWrap  = document.getElementById('rec-time-wrap');
+  if (wdWrap) wdWrap.style.display = (type === 'date_time') ? 'none' : 'flex';
+  if (dtWrap) dtWrap.style.display = (type === 'date_time') ? 'flex' : 'none';
+  if (tWrap)  tWrap.style.display  = (type === 'weekday')   ? 'none' : 'flex';
+}
+
+async function addRecurring() {
+  if (!_sb) return;
+  var type    = document.getElementById('rec-type').value;
+  var weekday = parseInt(document.getElementById('rec-weekday').value, 10);
+  var date    = document.getElementById('rec-date') ? document.getElementById('rec-date').value : '';
+  var from    = document.getElementById('rec-time-from') ? document.getElementById('rec-time-from').value : '';
+  var to      = document.getElementById('rec-time-to')   ? document.getElementById('rec-time-to').value   : '';
+  var label   = document.getElementById('rec-label')     ? document.getElementById('rec-label').value.trim() : '';
+
+  if (type !== 'date_time' && isNaN(weekday)) { showError('Wochentag fehlt.'); return; }
+  if (type === 'date_time' && !date)           { showError('Datum fehlt.'); return; }
+  if (type !== 'weekday'  && (!from || !to))   { showError('Von- und Bis-Uhrzeit fehlen.'); return; }
+
+  var payload = { type: type, label: label || null };
+  if (type !== 'date_time') payload.weekday = weekday;
+  if (type === 'date_time') payload.specific_date = date;
+  if (type !== 'weekday')   { payload.time_from = from; payload.time_to = to; }
+
+  var r = await _sb.from('recurring_blocks').insert([payload]);
+  if (r.error) { showError('Fehler: ' + r.error.message); return; }
+
+  showInfo('Regel gespeichert.');
+  if (document.getElementById('rec-label'))     document.getElementById('rec-label').value = '';
+  if (document.getElementById('rec-date'))      document.getElementById('rec-date').value  = '';
+  if (document.getElementById('rec-time-from')) document.getElementById('rec-time-from').value = '';
+  if (document.getElementById('rec-time-to'))   document.getElementById('rec-time-to').value   = '';
+
+  var rRes = await _sb.from('recurring_blocks').select('*').order('created_at', { ascending: false });
+  if (!rRes.error) allRecurring = rRes.data || [];
+  renderRecurringList();
+  try { renderCalendar(); } catch(e) {}
+  setTimeout(function() { showInfo(''); }, 2000);
+}
+
+async function deleteRecurring(id) {
+  if (!_sb) return;
+  var r = await _sb.from('recurring_blocks').delete().eq('id', id);
+  if (r.error) { showError('Fehler beim Löschen: ' + r.error.message); return; }
+  allRecurring = allRecurring.filter(function(x) { return x.id !== id; });
+  renderRecurringList();
+  try { renderCalendar(); } catch(e) {}
 }
 
 // ── BOOKING LIST TABLE ────────────────────────────────────

@@ -345,6 +345,32 @@
   display: inline-block;
   margin-right: 3px;
 }
+.legend-dot-recurring {
+  width: 9px; height: 9px;
+  border-radius: 2px;
+  background: rgba(139,92,246,0.7);
+  display: inline-block;
+  margin-right: 3px;
+}
+.legend-dot-partial {
+  width: 9px; height: 9px;
+  border-radius: 2px;
+  background: rgba(245,158,11,0.7);
+  display: inline-block;
+  margin-right: 3px;
+}
+
+.cal-cell.rec-blocked {
+  background: rgba(139,92,246,0.12);
+  border: 1px solid rgba(139,92,246,0.3);
+}
+.cal-cell.rec-blocked .day-num { color: #A78BFA; }
+
+.cal-cell.rec-partial {
+  background: rgba(245,158,11,0.1);
+  border: 1px solid rgba(245,158,11,0.25);
+}
+.cal-cell.rec-partial .day-num { color: #FCD34D; }
 
 /* === DAY DETAIL PANEL === */
 .day-detail {
@@ -1161,3 +1187,130 @@
   border: 2px solid var(--border);
 }
 .btn-save-notes:hover { background: var(--purple); color: white; border-color: var(--purple); }
+
+/* === WIEDERKEHRENDE SPERREN PANEL === */
+.recurring-block-panel {
+  margin-top: 24px;
+  background: var(--white);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+}
+
+.recurring-block-panel h4 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.recurring-hint {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-bottom: 18px;
+  line-height: 1.5;
+}
+
+.recurring-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.rec-select {
+  padding: 10px 14px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.88rem;
+  outline: none;
+  cursor: pointer;
+  transition: var(--ease);
+  width: 100%;
+}
+.rec-select:focus { border-color: var(--purple); }
+
+.rec-inputs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.rec-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 140px;
+}
+
+.rec-field label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+/* reuse range-date-input for time/date inputs inside rec-field */
+
+/* List of rules */
+.recurring-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.recurring-empty {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  padding: 12px 0;
+}
+
+.recurring-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+}
+
+.recurring-item-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.recurring-item-label {
+  flex: 1;
+  font-size: 0.87rem;
+  font-weight: 500;
+}
+
+.rec-delete-btn {
+  background: transparent;
+  border: 1px solid rgba(239,68,68,0.3);
+  border-radius: var(--radius-sm);
+  color: #F87171;
+  cursor: pointer;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  transition: var(--ease);
+  flex-shrink: 0;
+}
+.rec-delete-btn:hover {
+  background: rgba(239,68,68,0.15);
+  border-color: #EF4444;
+}
+
+@media (max-width: 600px) {
+  .rec-inputs { flex-direction: column; }
+  .rec-field  { min-width: 100%; }
+}

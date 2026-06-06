@@ -117,7 +117,9 @@
                 <span class="legend-dot pending"></span> Ausstehend&ensp;
                 <span class="legend-dot confirmed"></span> Bestätigt&ensp;
                 <span class="legend-dot cancelled"></span> Abgelehnt&ensp;
-                <span class="legend-dot-blocked"></span> Gesperrt
+                <span class="legend-dot-blocked"></span> Gesperrt&ensp;
+                <span class="legend-dot-recurring"></span> Wiederkehrend&ensp;
+                <span class="legend-dot-partial"></span> Uhrzeit gesperrt
               </div>
             </div>
 
@@ -149,6 +151,50 @@
               <button class="btn btn-outline" onclick="blockRange()">🔒 Zeitraum sperren</button>
             </div>
           </div>
+
+          <!-- Wiederkehrende Sperren -->
+          <div class="recurring-block-panel">
+            <h4>🔁 Wiederkehrende Sperren</h4>
+            <p class="recurring-hint">Tage oder Uhrzeiten, die dauerhaft geblockt sind – z.B. jeden Montag wegen Schule oder samstags nur abends.</p>
+            <div class="recurring-form">
+              <select id="rec-type" class="rec-select" onchange="onRecTypeChange()">
+                <option value="weekday">Wochentag – ganztags gesperrt</option>
+                <option value="weekday_time">Wochentag – mit Uhrzeit gesperrt</option>
+                <option value="date_time">Einzelner Tag – mit Uhrzeit gesperrt</option>
+              </select>
+              <div class="rec-inputs">
+                <div id="rec-weekday-wrap" class="rec-field">
+                  <label>Wochentag</label>
+                  <select id="rec-weekday" class="rec-select">
+                    <option value="0">Montag</option>
+                    <option value="1">Dienstag</option>
+                    <option value="2">Mittwoch</option>
+                    <option value="3">Donnerstag</option>
+                    <option value="4">Freitag</option>
+                    <option value="5">Samstag</option>
+                    <option value="6">Sonntag</option>
+                  </select>
+                </div>
+                <div id="rec-date-wrap" class="rec-field" style="display:none">
+                  <label>Datum</label>
+                  <input type="date" id="rec-date" class="range-date-input">
+                </div>
+                <div id="rec-time-wrap" class="rec-field" style="display:none">
+                  <label>Von</label>
+                  <input type="time" id="rec-time-from" class="range-date-input">
+                  <label>Bis</label>
+                  <input type="time" id="rec-time-to" class="range-date-input">
+                </div>
+                <div class="rec-field">
+                  <label>Bezeichnung (optional)</label>
+                  <input type="text" id="rec-label" class="range-date-input" placeholder="z.B. Schule, Urlaub …">
+                </div>
+                <button class="btn btn-outline" onclick="addRecurring()">➕ Hinzufügen</button>
+              </div>
+            </div>
+            <div id="recurring-list" class="recurring-list"></div>
+          </div>
+
         </div>
 
         <!-- ── BUCHUNGSLISTE TAB ── -->
