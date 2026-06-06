@@ -329,9 +329,21 @@ async function updateStatus(id, newStatus) {
   try {
     var res = await _sb.from('bookings').update({ status: newStatus }).eq('id', id);
     if (res.error) {
-      showError('UPDATE Fehler: ' + res.error.message + ' | Code: ' + res.error.code + ' | Details: ' + res.error.details);
+      showError('UPDATE Fehler: ' + res.error.message + ' | Code: ' + res.error.code);
       return;
     }
+
+    // Sofort aus DB zurücklesen um zu prüfen ob wirklich gespeichert
+    var verify = await _sb.from('bookings').select('status').eq('id', id).single();
+    if (verify.error) {
+      showError('Lese-Fehler nach Update: ' + verify.error.message);
+      return;
+    }
+    if (verify.data.status !== newStatus) {
+      showError('Nicht gespeichert! DB zeigt noch: ' + verify.data.status + ' → RLS oder GRANT prüfen');
+      return;
+    }
+
     for (var i = 0; i < allBookings.length; i++) {
       if (allBookings[i].id === id) { allBookings[i].status = newStatus; break; }
     }
