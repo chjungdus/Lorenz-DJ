@@ -453,9 +453,26 @@
             <label for="guest_count">Personenanzahl *</label>
             <input type="number" id="guest_count" name="guest_count" placeholder="50" min="1" max="10000" required>
           </div>
-          <div class="form-group">
-            <label for="event_date">Datum *</label>
-            <input type="date" id="event_date" name="event_date" required>
+          <div class="form-group full">
+            <label>Datum *</label>
+            <div class="avail-cal-wrap">
+              <div class="avail-cal-nav">
+                <button type="button" class="avail-nav-btn" onclick="availPrevMonth()">&#8249;</button>
+                <span id="avail-month-label"></span>
+                <button type="button" class="avail-nav-btn" onclick="availNextMonth()">&#8250;</button>
+              </div>
+              <div class="avail-weekdays">
+                <span>Mo</span><span>Di</span><span>Mi</span><span>Do</span><span>Fr</span>
+                <span>Sa</span><span>So</span>
+              </div>
+              <div id="avail-cal-grid"></div>
+              <div class="avail-legend">
+                <span class="avail-dot free"></span> Verfügbar &ensp;
+                <span class="avail-dot taken"></span> Belegt / Gesperrt
+              </div>
+            </div>
+            <input type="date" id="event_date" name="event_date" required style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;">
+            <div id="avail-selected" class="avail-selected-label"></div>
           </div>
           <div class="form-group">
             <label>Uhrzeit *</label>
@@ -528,7 +545,7 @@
         </div>
       </div>
       <div class="footer-bottom">
-        <p>© 2025 DJ Adler | Lorenz. | <a href="#">Impressum</a> | <a href="#">Datenschutz</a></p>
+        <p>© 2026 DJ Adler | Lorenz. | <a href="#">Impressum</a> | <a href="#">Datenschutz</a></p>
         <a href="admin.html" class="footer-admin">Admin</a>
       </div>
     </div>

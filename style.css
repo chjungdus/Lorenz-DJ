@@ -1493,3 +1493,109 @@ section { padding: 96px 0; }
   .hero-eagle { width: 100%; right: -20%; }
   .equip-photo-wrap { height: 180px; }
 }
+
+/* ── Availability Calendar (Booking Page) ── */
+.avail-cal-wrap {
+  background: var(--white);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+}
+
+.avail-cal-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.avail-cal-nav span {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.avail-nav-btn {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: transparent;
+  font-size: 1.3rem;
+  cursor: pointer;
+  color: var(--purple);
+  font-family: inherit;
+  display: flex; align-items: center; justify-content: center;
+  transition: var(--ease);
+  line-height: 1;
+}
+.avail-nav-btn:hover { background: var(--surface); border-color: var(--purple); }
+
+.avail-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+  margin-bottom: 4px;
+}
+.avail-weekdays span {
+  text-align: center;
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--text-muted);
+  padding: 4px 0;
+}
+
+#avail-cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+}
+
+.avail-cell {
+  aspect-ratio: 1;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: background .12s, transform .1s;
+  min-height: 36px;
+}
+
+.avail-cell.empty   { background: transparent; }
+.avail-cell.past    { color: var(--text-muted); opacity: .4; cursor: not-allowed; background: transparent; }
+.avail-cell.taken   { background: rgba(239,68,68,.12); color: #EF4444; cursor: not-allowed; text-decoration: line-through; }
+.avail-cell.free    { background: rgba(16,185,129,.08); color: #059669; cursor: pointer; }
+.avail-cell.free:hover { background: rgba(16,185,129,.18); transform: scale(1.05); }
+.avail-cell.weekend.free { background: rgba(124,58,237,.07); color: var(--purple); }
+.avail-cell.weekend.free:hover { background: rgba(124,58,237,.15); }
+.avail-cell.sel     { background: var(--purple) !important; color: #fff !important; transform: scale(1.05); }
+
+.avail-legend {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.avail-dot {
+  width: 10px; height: 10px;
+  border-radius: 3px;
+  display: inline-block;
+}
+.avail-dot.free  { background: rgba(16,185,129,.3); border: 1px solid #10B981; }
+.avail-dot.taken { background: rgba(239,68,68,.2); border: 1px solid #EF4444; }
+
+.avail-selected-label {
+  margin-top: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  min-height: 22px;
+}
+.avail-selected-label.active { color: #059669; }

@@ -86,6 +86,80 @@ document.addEventListener('click', (e) => {
 
 let _takenDates = [];
 
+var _availYear  = new Date().getFullYear();
+var _availMonth = new Date().getMonth();
+
+function availPad2(n) { return n < 10 ? '0' + n : '' + n; }
+
+function renderAvailCalendar() {
+  var grid  = document.getElementById('avail-cal-grid');
+  var label = document.getElementById('avail-month-label');
+  if (!grid || !label) return;
+
+  var MONTHS = ['Januar','Februar','März','April','Mai','Juni',
+                'Juli','August','September','Oktober','November','Dezember'];
+  label.textContent = MONTHS[_availMonth] + ' ' + _availYear;
+
+  var firstDay    = new Date(_availYear, _availMonth, 1);
+  var startOffset = (firstDay.getDay() + 6) % 7;
+  var daysInMonth = new Date(_availYear, _availMonth + 1, 0).getDate();
+  var today       = new Date(); today.setHours(0,0,0,0);
+  var currentVal  = document.getElementById('event_date')?.value || '';
+
+  var html = '';
+  for (var e = 0; e < startOffset; e++) html += '<div class="avail-cell empty"></div>';
+
+  for (var d = 1; d <= daysInMonth; d++) {
+    var ds   = _availYear + '-' + availPad2(_availMonth + 1) + '-' + availPad2(d);
+    var date = new Date(_availYear, _availMonth, d);
+    var isPast     = date < today;
+    var isTaken    = _takenDates.indexOf(ds) !== -1;
+    var isSelected = currentVal === ds;
+    var weekday    = date.getDay();
+    var isWeekend  = weekday === 0 || weekday === 6;
+
+    var cls = 'avail-cell';
+    if (isPast)       cls += ' past';
+    else if (isTaken) cls += ' taken';
+    else              cls += ' free';
+    if (isSelected)   cls += ' sel';
+    if (isWeekend && !isPast && !isTaken) cls += ' weekend';
+
+    var click = (!isPast && !isTaken)
+      ? ' onclick="selectAvailDate(\'' + ds + '\')"' : '';
+
+    html += '<div class="' + cls + '"' + click + '>' + d + '</div>';
+  }
+  grid.innerHTML = html;
+}
+
+function selectAvailDate(ds) {
+  var inp = document.getElementById('event_date');
+  var lbl = document.getElementById('avail-selected');
+  if (inp) inp.value = ds;
+  if (lbl) {
+    var p = ds.split('-');
+    lbl.textContent = '✓ ' + p[2] + '.' + p[1] + '.' + p[0] + ' ausgewählt';
+    lbl.className = 'avail-selected-label active';
+  }
+  renderAvailCalendar();
+  // clear old availability warning
+  var mb = document.getElementById('form-message');
+  if (mb && mb.textContent.includes('belegt')) { mb.textContent = ''; mb.className = 'form-message'; }
+}
+
+function availPrevMonth() {
+  _availMonth--;
+  if (_availMonth < 0) { _availMonth = 11; _availYear--; }
+  renderAvailCalendar();
+}
+
+function availNextMonth() {
+  _availMonth++;
+  if (_availMonth > 11) { _availMonth = 0; _availYear++; }
+  renderAvailCalendar();
+}
+
 async function loadAvailability() {
   if (typeof SUPABASE_URL === 'undefined' || SUPABASE_URL === 'DEINE_SUPABASE_URL') return;
   try {
@@ -97,6 +171,7 @@ async function loadAvailability() {
     const blockedList = (blockedRes.data || []).map(r => r.date);
     const bookedList  = (bookedRes.data  || []).map(r => r.event_date);
     _takenDates = [...new Set([...blockedList, ...bookedList])];
+    renderAvailCalendar();
 
     const dateInput = document.getElementById('event_date');
     if (dateInput) dateInput.addEventListener('change', checkDateAvailability);
@@ -193,7 +268,8 @@ function showMessage(text, type) {
 
 // Verfügbarkeit laden sobald DOM bereit ist
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', loadAvailability);
+  document.addEventListener('DOMContentLoaded', function() { loadAvailability(); renderAvailCalendar(); });
 } else {
   loadAvailability();
+  renderAvailCalendar();
 }
