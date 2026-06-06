@@ -148,7 +148,7 @@ form.addEventListener('submit', async (e) => {
 
   const supabase = _bookingSb || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  const payload = {
+  const fullPayload = {
     name:           form.name.value.trim(),
     email:          form.email.value.trim(),
     phone:          form.phone.value.trim(),
@@ -160,12 +160,25 @@ form.addEventListener('submit', async (e) => {
     message:        form.message.value.trim() || null,
   };
 
-  const { error } = await supabase.from('bookings').insert([payload]);
+  let result = await supabase.from('bookings').insert([fullPayload]);
 
-  if (error) {
-    const detail = error.message || JSON.stringify(error);
-    showMessage(`Fehler beim Senden: ${detail}`, 'error');
-    console.error(error);
+  // Falls optionale Spalten noch nicht im Schema-Cache: ohne sie nochmal versuchen
+  if (result.error && result.error.message && result.error.message.includes('schema cache')) {
+    const basePayload = {
+      name:        fullPayload.name,
+      email:       fullPayload.email,
+      phone:       fullPayload.phone,
+      event_date:  fullPayload.event_date,
+      event_time:  fullPayload.event_time,
+      guest_count: fullPayload.guest_count,
+      message:     fullPayload.message,
+    };
+    result = await supabase.from('bookings').insert([basePayload]);
+  }
+
+  if (result.error) {
+    showMessage(`Fehler beim Senden: ${result.error.message}`, 'error');
+    console.error(result.error);
   } else {
     showMessage('Anfrage erfolgreich! Ich melde mich innerhalb von 24 Stunden bei dir.', 'success');
     form.reset();
