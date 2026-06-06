@@ -161,10 +161,14 @@ form.addEventListener('submit', async (e) => {
 
   let { error } = await supabase.from('bookings').insert([payload]);
 
-  // Fallback: Wenn PostgREST event_location nicht kennt (Schema-Cache-Problem)
-  if (error && error.message && error.message.includes('event_location')) {
+  // Fallback: PostgREST Schema-Cache kennt optionale Spalten noch nicht
+  if (error && error.message && (
+    error.message.includes('event_location') ||
+    error.message.includes('event_time_end')
+  )) {
     const fallback = { ...payload };
     delete fallback.event_location;
+    delete fallback.event_time_end;
     const retry = await supabase.from('bookings').insert([fallback]);
     error = retry.error;
   }
