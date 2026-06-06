@@ -327,13 +327,9 @@ async function updateStatus(id, newStatus) {
   if (!_sb) { showError('Kein Supabase-Client.'); return; }
   showInfo('Status wird gespeichert…');
   try {
-    var res = await _sb.from('bookings').update({ status: newStatus }).eq('id', id).select();
+    var res = await _sb.from('bookings').update({ status: newStatus }).eq('id', id);
     if (res.error) {
-      showError('Fehler: ' + res.error.message + ' → SQL-Fix-Skript in Supabase ausführen!');
-      return;
-    }
-    if (!res.data || res.data.length === 0) {
-      showError('Keine Datenbankberechtigung! Bitte das SQL-Fix-Skript (supabase-setup.sql) in Supabase ausführen.');
+      showError('Fehler: ' + res.error.message);
       return;
     }
     for (var i = 0; i < allBookings.length; i++) {
