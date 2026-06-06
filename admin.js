@@ -329,7 +329,7 @@ async function updateStatus(id, newStatus) {
   try {
     var res = await _sb.from('bookings').update({ status: newStatus }).eq('id', id);
     if (res.error) {
-      showError('Fehler: ' + res.error.message);
+      showError('UPDATE Fehler: ' + res.error.message + ' | Code: ' + res.error.code + ' | Details: ' + res.error.details);
       return;
     }
     for (var i = 0; i < allBookings.length; i++) {
@@ -358,18 +358,16 @@ async function doToggleBlock(dateStr) {
   showInfo(isBlocked ? 'Tag wird freigegeben…' : 'Tag wird gesperrt…');
   try {
     if (isBlocked) {
-      var r = await _sb.from('blocked_dates').delete().eq('date', dateStr).select();
-      if (r.error) { showError('Fehler: ' + r.error.message + ' → SQL-Fix-Skript ausführen!'); return; }
-      if (!r.data || r.data.length === 0) {
-        showError('Keine Berechtigung! Bitte das SQL-Fix-Skript in Supabase ausführen.');
+      var r = await _sb.from('blocked_dates').delete().eq('date', dateStr);
+      if (r.error) {
+        showError('DELETE Fehler: ' + r.error.message + ' | Code: ' + r.error.code + ' | Details: ' + r.error.details);
         return;
       }
       allBlocked = allBlocked.filter(function (d) { return d !== dateStr; });
     } else {
-      var r2 = await _sb.from('blocked_dates').insert([{ date: dateStr }]).select();
-      if (r2.error) { showError('Fehler: ' + r2.error.message + ' → SQL-Fix-Skript ausführen!'); return; }
-      if (!r2.data || r2.data.length === 0) {
-        showError('Keine Berechtigung! Bitte das SQL-Fix-Skript in Supabase ausführen.');
+      var r2 = await _sb.from('blocked_dates').insert([{ date: dateStr }]);
+      if (r2.error) {
+        showError('INSERT Fehler: ' + r2.error.message + ' | Code: ' + r2.error.code + ' | Details: ' + r2.error.details);
         return;
       }
       allBlocked.push(dateStr);
