@@ -371,8 +371,25 @@ section { padding: 96px 0; }
   .navbar:not(.scrolled) .nav-links a:hover { color: white; }
 }
 
+/* ── ADLER-WASSERZEICHEN FÜR SECTIONS ── */
+.section-eagle-wm {
+  position: absolute;
+  pointer-events: none;
+  z-index: 0;
+}
+.section-eagle-wm img {
+  width: 100%; height: auto; display: block;
+  filter: invert(1) sepia(1) saturate(8) hue-rotate(248deg) brightness(2.5);
+}
+
 /* === ÜBER MICH === */
-.about { background: var(--gradient-soft); }
+.about { background: var(--gradient-soft); position: relative; overflow: hidden; }
+.about .container { position: relative; z-index: 1; }
+.about > .section-eagle-wm {
+  right: -60px; bottom: -40px;
+  width: 440px; opacity: 0.05;
+  transform: rotate(10deg);
+}
 
 .about-grid {
   display: grid;
@@ -507,7 +524,13 @@ section { padding: 96px 0; }
 }
 
 /* === PREISE === */
-.preise { background: var(--gradient-soft); }
+.preise { background: var(--gradient-soft); position: relative; overflow: hidden; }
+.preise .container { position: relative; z-index: 1; }
+.preise > .section-eagle-wm {
+  left: -80px; top: 50%;
+  transform: translateY(-50%) rotate(-10deg);
+  width: 500px; opacity: 0.05;
+}
 
 .preise-grid {
   display: grid;
@@ -585,8 +608,8 @@ section { padding: 96px 0; }
 }
 
 .preis-list li::before {
-  content: '—';
-  color: var(--purple-light);
+  content: '▸';
+  color: var(--pink);
   font-weight: 700;
   flex-shrink: 0;
 }
@@ -868,7 +891,13 @@ section { padding: 96px 0; }
 .foto-slot-wide { grid-column: span 2; }
 
 /* === BUCHUNG === */
-.booking { background: var(--white); }
+.booking { background: var(--white); position: relative; overflow: hidden; }
+.booking .container { position: relative; z-index: 1; }
+.booking > .section-eagle-wm {
+  right: -70px; bottom: -30px;
+  width: 420px; opacity: 0.04;
+  transform: rotate(5deg);
+}
 
 .booking .section-sub a { color: var(--purple); font-weight: 600; }
 
@@ -1237,20 +1266,42 @@ section { padding: 96px 0; }
 
 /* ── PREISE CARDS ── */
 .preis-card {
+  overflow: hidden;
   transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 .preis-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 16px 44px rgba(124,58,237,.13);
+  box-shadow: 0 16px 44px rgba(124,58,237,.2);
   border-color: var(--purple-light);
+}
+@keyframes cardGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(124,58,237,0), 0 8px 30px rgba(124,58,237,.1); }
+  50%       { box-shadow: 0 0 28px 4px rgba(124,58,237,.22), 0 8px 50px rgba(236,72,153,.15); }
 }
 .preis-highlight {
   background: linear-gradient(160deg, #1E1030 0%, #1A0D28 100%);
+  animation: cardGlow 4s ease-in-out infinite;
 }
 .preis-highlight:hover {
-  box-shadow: 0 20px 56px rgba(124,58,237,.24);
+  box-shadow: 0 20px 56px rgba(124,58,237,.35) !important;
   border-color: var(--purple) !important;
 }
+
+/* Inner eagle on highlight card */
+.preis-card-eagle {
+  position: absolute;
+  bottom: -20px; right: -20px;
+  width: 140px;
+  opacity: 0.09;
+  pointer-events: none;
+  z-index: 0;
+  transform: rotate(12deg);
+}
+.preis-card-eagle img {
+  width: 100%; height: auto; display: block;
+  filter: invert(1) sepia(1) saturate(8) hue-rotate(248deg) brightness(2.5);
+}
+.preis-card > *:not(.preis-card-eagle) { position: relative; z-index: 1; }
 
 /* ── EVENT ITEMS ── */
 .event-item {
@@ -1401,6 +1452,8 @@ section { padding: 96px 0; }
   .hero-eyebrow, .hero-tagline, .hero-actions, .hero-quick,
   .hero-right, .hero-card,
   .hero-actions .btn-primary,
+  .hero-eagle,
+  .preis-highlight,
   .section-tag,
   .photo-break-overlay { animation: none !important; }
   .hero-actions .btn-primary { box-shadow: 0 2px 12px rgba(124,58,237,.35); }
@@ -1415,25 +1468,34 @@ section { padding: 96px 0; }
 /* Nav-Adler */
 .nav-eagle {
   width: 36px; height: auto; flex-shrink: 0;
-  filter: invert(1) sepia(1) saturate(8) hue-rotate(248deg) brightness(2.5);
+  filter: invert(1) sepia(1) saturate(8) hue-rotate(248deg) brightness(2.5) drop-shadow(0 0 8px rgba(124,58,237,.9));
+  transition: filter 0.3s ease;
+}
+.nav-eagle:hover {
+  filter: invert(1) sepia(1) saturate(10) hue-rotate(248deg) brightness(3) drop-shadow(0 0 16px rgba(236,72,153,1));
 }
 
 /* Hero-Adler – großes dekoratives Hintergrundelement */
+@keyframes eagleFloat {
+  0%, 100% { transform: rotate(-5deg) translateY(0); }
+  50%       { transform: rotate(-3deg) translateY(-18px); }
+}
+
 .hero-eagle {
   position: absolute;
   bottom: -6%;
   right: -8%;
   width: 62%;
   max-width: 700px;
-  opacity: 0.09;
+  opacity: 0.22;
   z-index: 1;
   pointer-events: none;
-  transform: rotate(-5deg);
+  animation: eagleFloat 9s ease-in-out infinite;
 }
 .hero-eagle svg { width: 100%; height: auto; display: block; }
 .hero-eagle img {
   width: 100%; height: auto; display: block;
-  filter: invert(1) sepia(1) saturate(8) hue-rotate(248deg) brightness(2.5);
+  filter: invert(1) sepia(1) saturate(8) hue-rotate(248deg) brightness(2.5) drop-shadow(0 0 60px rgba(124,58,237,.6));
 }
 
 /* Footer-Adler */
