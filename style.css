@@ -41,6 +41,22 @@ body {
   font-size: 15px;
 }
 
+/* Subtile Scanlines – gibt Tiefe ohne Neon-Look */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    rgba(0,0,0,.07) 3px,
+    rgba(0,0,0,.07) 4px
+  );
+}
+
 h1, h2, h3, h4 {
   font-family: 'Space Grotesk', sans-serif;
   line-height: 1.15;
@@ -371,25 +387,63 @@ section { padding: 96px 0; }
   .navbar:not(.scrolled) .nav-links a:hover { color: white; }
 }
 
-/* ── ADLER-WASSERZEICHEN FÜR SECTIONS ── */
-.section-eagle-wm {
-  position: absolute;
-  pointer-events: none;
-  z-index: 0;
+/* ── GENRE TICKER / MARQUEE ── */
+.marquee-band {
+  background: var(--gradient);
+  overflow: hidden;
+  padding: 13px 0;
+  user-select: none;
 }
-.section-eagle-wm img {
-  width: 100%; height: auto; display: block;
-  filter: invert(1) sepia(1) saturate(8) hue-rotate(248deg) brightness(2.5);
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marqueeScroll 28s linear infinite;
+}
+.marquee-track span {
+  white-space: nowrap;
+  padding: 0 28px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.72rem;
+  color: rgba(255,255,255,.92);
+}
+.marquee-track span::after {
+  content: '·';
+  padding-left: 28px;
+  opacity: 0.6;
+}
+@keyframes marqueeScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ── FOTO-BREAK TEXT ── */
+.photo-break { position: relative; }
+.photo-break-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 32px;
+  text-align: center;
+  pointer-events: none;
+}
+.photo-break-text strong {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(1.8rem, 6vw, 5rem);
+  font-weight: 900;
+  color: white;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  text-shadow: 0 2px 40px rgba(0,0,0,.6);
+  max-width: 900px;
 }
 
 /* === ÜBER MICH === */
-.about { background: var(--gradient-soft); position: relative; overflow: hidden; }
-.about .container { position: relative; z-index: 1; }
-.about > .section-eagle-wm {
-  right: -60px; bottom: -40px;
-  width: 440px; opacity: 0.05;
-  transform: rotate(10deg);
-}
+.about { background: var(--gradient-soft); }
 
 .about-grid {
   display: grid;
@@ -544,13 +598,7 @@ section { padding: 96px 0; }
 }
 
 /* === PREISE === */
-.preise { background: var(--gradient-soft); position: relative; overflow: hidden; }
-.preise .container { position: relative; z-index: 1; }
-.preise > .section-eagle-wm {
-  left: -80px; top: 50%;
-  transform: translateY(-50%) rotate(-10deg);
-  width: 500px; opacity: 0.05;
-}
+.preise { background: var(--gradient-soft); }
 
 .preise-grid {
   display: grid;
@@ -911,13 +959,7 @@ section { padding: 96px 0; }
 .foto-slot-wide { grid-column: span 2; }
 
 /* === BUCHUNG === */
-.booking { background: var(--white); position: relative; overflow: hidden; }
-.booking .container { position: relative; z-index: 1; }
-.booking > .section-eagle-wm {
-  right: -70px; bottom: -30px;
-  width: 420px; opacity: 0.04;
-  transform: rotate(5deg);
-}
+.booking { background: var(--white); }
 
 .booking .section-sub a { color: var(--purple); font-weight: 600; }
 
@@ -1290,38 +1332,17 @@ section { padding: 96px 0; }
   transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 .preis-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 16px 44px rgba(124,58,237,.2);
+  transform: translateY(-5px);
+  box-shadow: 0 14px 40px rgba(0,0,0,.35);
   border-color: var(--purple-light);
-}
-@keyframes cardGlow {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(124,58,237,0), 0 8px 30px rgba(124,58,237,.1); }
-  50%       { box-shadow: 0 0 28px 4px rgba(124,58,237,.22), 0 8px 50px rgba(236,72,153,.15); }
 }
 .preis-highlight {
   background: linear-gradient(160deg, #1E1030 0%, #1A0D28 100%);
-  animation: cardGlow 4s ease-in-out infinite;
 }
 .preis-highlight:hover {
-  box-shadow: 0 20px 56px rgba(124,58,237,.35) !important;
+  box-shadow: 0 18px 50px rgba(124,58,237,.2) !important;
   border-color: var(--purple) !important;
 }
-
-/* Inner eagle on highlight card */
-.preis-card-eagle {
-  position: absolute;
-  bottom: -20px; right: -20px;
-  width: 140px;
-  opacity: 0.09;
-  pointer-events: none;
-  z-index: 0;
-  transform: rotate(12deg);
-}
-.preis-card-eagle img {
-  width: 100%; height: auto; display: block;
-  filter: invert(1) sepia(1) saturate(8) hue-rotate(248deg) brightness(2.5);
-}
-.preis-card > *:not(.preis-card-eagle) { position: relative; z-index: 1; }
 
 /* ── EVENT ITEMS ── */
 .event-item {
@@ -1488,11 +1509,7 @@ section { padding: 96px 0; }
 /* Nav-Adler */
 .nav-eagle {
   width: 36px; height: auto; flex-shrink: 0;
-  filter: invert(1) sepia(1) saturate(8) hue-rotate(248deg) brightness(2.5) drop-shadow(0 0 8px rgba(124,58,237,.9));
-  transition: filter 0.3s ease;
-}
-.nav-eagle:hover {
-  filter: invert(1) sepia(1) saturate(10) hue-rotate(248deg) brightness(3) drop-shadow(0 0 16px rgba(236,72,153,1));
+  filter: invert(1) sepia(1) saturate(8) hue-rotate(248deg) brightness(2.5);
 }
 
 /* Hero-Adler – großes dekoratives Hintergrundelement */
