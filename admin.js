@@ -1,19 +1,21 @@
-// admin.js – Edmund Panel
+// admin.js – Edmund Panel (clean rewrite)
 
-var _sb           = null;
-var allBookings   = [];
-var allBlocked    = [];
-var allRecurring  = [];
-var selectedDate  = null;
-var curFilter     = 'all';
+// ── GLOBAL STATE ──────────────────────────────────────────
+var _sb          = null;
+var allBookings  = [];
+var allBlocked   = [];
+var selectedDate = null;
+var curFilter    = 'all';
 
 var _now     = new Date();
 var curYear  = _now.getFullYear();
-var curMonth = _now.getMonth();
+var curMonth = _now.getMonth(); // 0-based
 
 // ── HELPERS ───────────────────────────────────────────────
 
-function pad2(n) { return n < 10 ? '0' + n : '' + n; }
+function pad2(n) {
+  return n < 10 ? '0' + n : '' + n;
+}
 
 function esc(str) {
   return String(str == null ? '' : str)
@@ -42,9 +44,10 @@ function statusLabel(s) {
 function estimatePrice(n) {
   n = parseInt(n, 10);
   if (!n)       return '–';
-  if (n <= 50)  return '~80–150 €';
-  if (n <= 150) return '~150–300 €';
-  return '300+ €';
+  if (n <= 30)  return '~150–200 €';
+  if (n <= 80)  return '~200–350 €';
+  if (n <= 150) return '~350–500 €';
+  return '500+ €';
 }
 
 // ── STATUS BANNER ─────────────────────────────────────────
@@ -52,36 +55,37 @@ function estimatePrice(n) {
 function showInfo(msg) {
   var el = document.getElementById('admin-status');
   if (!el) return;
-  el.textContent       = msg || '';
-  el.style.display     = msg ? 'block' : 'none';
-  el.style.background  = 'var(--surface)';
-  el.style.color       = 'var(--text-muted)';
-  el.style.borderLeft  = 'none';
+  el.textContent = msg || '';
+  el.style.display = msg ? 'block' : 'none';
+  el.style.background = 'var(--surface)';
+  el.style.color      = 'var(--text-muted)';
+  el.style.borderLeft = 'none';
 }
 
 function showError(msg) {
   var el = document.getElementById('admin-status');
   if (!el) { console.error('[admin]', msg); return; }
-  el.textContent        = msg || '';
-  el.style.display      = msg ? 'block' : 'none';
-  el.style.background   = 'rgba(239,68,68,0.12)';
-  el.style.color        = '#F87171';
-  el.style.borderLeft   = '3px solid #EF4444';
-  el.style.padding      = '10px 16px';
+  el.textContent = msg || '';
+  el.style.display    = msg ? 'block' : 'none';
+  el.style.background = 'rgba(239,68,68,0.12)';
+  el.style.color      = '#F87171';
+  el.style.borderLeft = '3px solid #EF4444';
+  el.style.padding    = '10px 16px';
   el.style.borderRadius = '8px';
   console.error('[admin]', msg);
 }
 
 // ── LOGIN ─────────────────────────────────────────────────
-// unlockDashboard() is called by the inline doLogin() in admin.html
-// after password check – and also on session restore below.
 
 function unlockDashboard() {
+  // 1. Supabase CDN check
   if (typeof window.supabase === 'undefined') {
     var gErr = document.getElementById('gate-error');
-    if (gErr) { gErr.textContent = 'Fehler: Supabase-CDN nicht geladen. Seite neu laden.'; gErr.style.display = 'block'; }
+    if (gErr) { gErr.textContent = 'Fehler: Supabase-CDN nicht geladen. Bitte Seite neu laden.'; gErr.style.display = 'block'; }
     return;
   }
+
+  // 2. Create client
   try {
     _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   } catch (e) {
@@ -90,10 +94,12 @@ function unlockDashboard() {
     return;
   }
 
+  // 3. Show dashboard
   document.getElementById('admin-gate').style.display      = 'none';
   document.getElementById('admin-dashboard').style.display = 'block';
   sessionStorage.setItem('lorenz-admin', '1');
 
+  // 4. Render calendar immediately (empty), then load data
   try { renderCalendar(); } catch (e) { showError('Kalender-Fehler: ' + e.message); }
   loadAll();
 }
@@ -103,7 +109,9 @@ function logout() {
   location.reload();
 }
 
-// Session-Wiederherstellung nach Seiten-Reload
+// Auto-session restore.
+// admin.js is loaded at the bottom of <body>, so the DOM is already parsed.
+// We do NOT need a load/DOMContentLoaded wrapper here.
 if (sessionStorage.getItem('lorenz-admin') === '1') {
   unlockDashboard();
 }
@@ -111,14 +119,17 @@ if (sessionStorage.getItem('lorenz-admin') === '1') {
 // ── DATA LOADING ──────────────────────────────────────────
 
 async function loadAll() {
-  if (!_sb) return;
+  if (!_sb) { showError('Kein Supabase-Client. Bitte neu einloggen.'); return; }
   showInfo('Buchungen werden geladen…');
 
+  // Bookings
   try {
-    var bRes = await _sb.from('bookings').select('*').order('event_date', { ascending: true });
+    var bRes = await _sb
+      .from('bookings')
+      .select('*')
+      .order('event_date', { ascending: true });
     if (bRes.error) {
-      showError('Fehler beim Laden der Buchungen: ' + bRes.error.message
-        + ' → Bitte SQL-Fix-Skript in Supabase ausführen!');
+      showError('Fehler beim Laden der Buchungen: ' + bRes.error.message);
     } else {
       allBookings = bRes.data || [];
     }
@@ -126,23 +137,16 @@ async function loadAll() {
     showError('Netzwerkfehler (Buchungen): ' + e.message);
   }
 
+  // Blocked dates — separate query so a bookings error doesn't break this
   try {
     var dRes = await _sb.from('blocked_dates').select('date');
-    if (!dRes.error) {
+    if (dRes.error) {
+      console.warn('[admin] blocked_dates:', dRes.error.message);
+    } else {
       allBlocked = (dRes.data || []).map(function (r) { return r.date; });
     }
   } catch (e) {
-    console.warn('[admin] blocked_dates:', e.message);
-  }
-
-  try {
-    var rRes = await _sb.from('recurring_blocks').select('*').order('created_at', { ascending: false });
-    if (!rRes.error) {
-      allRecurring = rRes.data || [];
-      renderRecurringList();
-    }
-  } catch (e) {
-    console.warn('[admin] recurring_blocks:', e.message);
+    console.warn('[admin] blocked_dates network error:', e.message);
   }
 
   showInfo('');
@@ -192,12 +196,14 @@ function nextMonth() {
 function renderCalendar() {
   var grid  = document.getElementById('admin-cal-grid');
   var label = document.getElementById('month-label');
-  if (!grid || !label) return;
+  if (!grid)  { console.warn('[admin] #admin-cal-grid not found'); return; }
+  if (!label) { console.warn('[admin] #month-label not found'); return; }
 
   var MONTHS = ['Januar','Februar','März','April','Mai','Juni',
                 'Juli','August','September','Oktober','November','Dezember'];
   label.textContent = MONTHS[curMonth] + ' ' + curYear;
 
+  // Build date→bookings map
   var bookingMap = {};
   for (var i = 0; i < allBookings.length; i++) {
     var b = allBookings[i];
@@ -207,48 +213,38 @@ function renderCalendar() {
   }
 
   var firstDay    = new Date(curYear, curMonth, 1);
-  var startOffset = (firstDay.getDay() + 6) % 7;
+  var startOffset = (firstDay.getDay() + 6) % 7; // Mon = 0
   var daysInMonth = new Date(curYear, curMonth + 1, 0).getDate();
   var today       = new Date();
   var todayStr    = today.getFullYear() + '-' + pad2(today.getMonth() + 1) + '-' + pad2(today.getDate());
 
   var html = '';
+
+  // Empty leading cells
   for (var e = 0; e < startOffset; e++) {
     html += '<div class="cal-cell empty"></div>';
   }
 
+  // Day cells
   for (var d = 1; d <= daysInMonth; d++) {
     var dateStr  = curYear + '-' + pad2(curMonth + 1) + '-' + pad2(d);
     var dayBooks = bookingMap[dateStr] || [];
     var isBlocked  = allBlocked.indexOf(dateStr) !== -1;
     var isToday    = dateStr === todayStr;
-    var weekdayJs  = new Date(curYear, curMonth, d).getDay();
-    var weekdayMo  = (weekdayJs + 6) % 7;
-    var isWeekend  = weekdayJs === 0 || weekdayJs === 6;
+    var weekday    = new Date(curYear, curMonth, d).getDay();
+    var isWeekend  = weekday === 0 || weekday === 6;
     var isSelected = dateStr === selectedDate;
-
-    var isRecFull = false, isRecPart = false;
-    for (var ri = 0; ri < allRecurring.length; ri++) {
-      var rec = allRecurring[ri];
-      if (rec.type === 'weekday' && rec.weekday === weekdayMo) { isRecFull = true; break; }
-      if (rec.type === 'weekday_time' && rec.weekday === weekdayMo) isRecPart = true;
-      if (rec.type === 'date_time' && rec.specific_date === dateStr) isRecPart = true;
-    }
 
     var cls = 'cal-cell';
     if (isToday)    cls += ' today';
     if (isWeekend)  cls += ' weekend';
     if (isBlocked)  cls += ' blocked';
-    else if (isRecFull) cls += ' rec-blocked';
-    else if (isRecPart) cls += ' rec-partial';
     if (isSelected) cls += ' selected';
 
     var inner = '<span class="day-num">' + d + '</span>';
 
     if (isBlocked) {
       inner += '<span class="blocked-x">✕</span>';
-    } else if (isRecFull) {
-      inner += '<span class="blocked-x">🔁</span>';
     } else if (dayBooks.length > 0) {
       var dots = '';
       var maxDots = Math.min(dayBooks.length, 3);
@@ -287,6 +283,7 @@ function selectDay(dateStr) {
 
   renderDayDetail(dateStr);
 
+  // Mobile: slide up
   var detail   = document.getElementById('day-detail');
   var backdrop = document.getElementById('detail-backdrop');
   if (detail)   detail.classList.add('open');
@@ -333,18 +330,13 @@ function renderDayDetail(dateStr) {
         + '<div class="booking-info-item"><label>Personen</label><span>' + esc(b.guest_count) + '</span></div>'
         + '<div class="booking-info-item"><label>E-Mail</label><span><a href="mailto:' + esc(b.email) + '">' + esc(b.email) + '</a></span></div>'
         + '<div class="booking-info-item"><label>Telefon</label><span><a href="tel:' + esc(b.phone) + '">' + esc(b.phone) + '</a></span></div>'
-        + (b.event_location ? '<div class="booking-info-item bii-full"><label>Ort</label><span>' + esc(b.event_location) + '</span></div>' : '')
+        + (b.event_location ? '<div class="booking-info-item span-2"><label>Veranstaltungsort</label><span>' + esc(b.event_location) + '</span></div>' : '')
       + '</div>'
       + (b.message ? '<div class="booking-msg">"' + esc(b.message) + '"</div>' : '')
       + '<div class="booking-actions">'
         + '<button class="action-btn btn-confirm" onclick="updateStatus(\'' + b.id + '\',\'confirmed\')"' + (b.status === 'confirmed' ? ' disabled' : '') + '>✓ Bestätigen</button>'
         + '<button class="action-btn btn-reject"  onclick="updateStatus(\'' + b.id + '\',\'cancelled\')"' + (b.status === 'cancelled' ? ' disabled' : '') + '>✕ Ablehnen</button>'
         + '<button class="action-btn btn-reset"   onclick="updateStatus(\'' + b.id + '\',\'pending\')"'   + (b.status === 'pending'   ? ' disabled' : '') + '>↺ Zurücksetzen</button>'
-      + '</div>'
-      + '<div class="booking-notes">'
-        + '<label class="notes-label">Notizen (nur für dich sichtbar)</label>'
-        + '<textarea class="notes-input" id="notes-' + b.id + '" placeholder="z.B. Musikwünsche, Anfahrt, Besonderheiten…">' + esc(b.admin_notes || '') + '</textarea>'
-        + '<button class="action-btn btn-save-notes" onclick="saveNotes(\'' + b.id + '\')">💾 Notiz speichern</button>'
       + '</div>'
     + '</div>';
   }).join('');
@@ -357,22 +349,7 @@ async function updateStatus(id, newStatus) {
   showInfo('Status wird gespeichert…');
   try {
     var res = await _sb.from('bookings').update({ status: newStatus }).eq('id', id);
-    if (res.error) {
-      showError('UPDATE Fehler: ' + res.error.message + ' | Code: ' + res.error.code);
-      return;
-    }
-
-    // Sofort aus DB zurücklesen um zu prüfen ob wirklich gespeichert
-    var verify = await _sb.from('bookings').select('status').eq('id', id).single();
-    if (verify.error) {
-      showError('Lese-Fehler nach Update: ' + verify.error.message);
-      return;
-    }
-    if (verify.data.status !== newStatus) {
-      showError('Nicht gespeichert! DB zeigt noch: ' + verify.data.status + ' → RLS oder GRANT prüfen');
-      return;
-    }
-
+    if (res.error) { showError('Fehler: ' + res.error.message); return; }
     for (var i = 0; i < allBookings.length; i++) {
       if (allBookings[i].id === id) { allBookings[i].status = newStatus; break; }
     }
@@ -400,17 +377,11 @@ async function doToggleBlock(dateStr) {
   try {
     if (isBlocked) {
       var r = await _sb.from('blocked_dates').delete().eq('date', dateStr);
-      if (r.error) {
-        showError('DELETE Fehler: ' + r.error.message + ' | Code: ' + r.error.code + ' | Details: ' + r.error.details);
-        return;
-      }
+      if (r.error) { showError('Fehler: ' + r.error.message); return; }
       allBlocked = allBlocked.filter(function (d) { return d !== dateStr; });
     } else {
       var r2 = await _sb.from('blocked_dates').insert([{ date: dateStr }]);
-      if (r2.error) {
-        showError('INSERT Fehler: ' + r2.error.message + ' | Code: ' + r2.error.code + ' | Details: ' + r2.error.details);
-        return;
-      }
+      if (r2.error) { showError('Fehler: ' + r2.error.message); return; }
       allBlocked.push(dateStr);
     }
     showInfo('');
@@ -425,140 +396,6 @@ async function doToggleBlock(dateStr) {
   } catch (e) {
     showError('Netzwerkfehler: ' + e.message);
   }
-}
-
-async function blockRange() {
-  var from = document.getElementById('range-from')?.value;
-  var to   = document.getElementById('range-to')?.value;
-  if (!from || !to) { showError('Bitte Von- und Bis-Datum auswählen.'); return; }
-  if (from > to)    { showError('Von-Datum muss vor Bis-Datum liegen.'); return; }
-
-  showInfo('Zeitraum wird gesperrt…');
-  var dates = [];
-  var cur = new Date(from + 'T00:00:00');
-  var end = new Date(to   + 'T00:00:00');
-  while (cur <= end) {
-    var ds = cur.getFullYear() + '-' + pad2(cur.getMonth()+1) + '-' + pad2(cur.getDate());
-    if (allBlocked.indexOf(ds) === -1) dates.push({ date: ds });
-    cur.setDate(cur.getDate() + 1);
-  }
-
-  if (dates.length === 0) { showInfo('Alle Tage bereits gesperrt.'); return; }
-
-  var r = await _sb.from('blocked_dates').insert(dates);
-  if (r.error) { showError('Fehler: ' + r.error.message); return; }
-
-  dates.forEach(function(d) { allBlocked.push(d.date); });
-  showInfo(dates.length + ' Tage gesperrt.');
-  document.getElementById('range-from').value = '';
-  document.getElementById('range-to').value   = '';
-  try { renderCalendar(); } catch(e) {}
-  setTimeout(function() { showInfo(''); }, 2000);
-}
-
-async function saveNotes(id) {
-  if (!_sb) return;
-  var ta = document.getElementById('notes-' + id);
-  if (!ta) return;
-  var notes = ta.value;
-
-  var res = await _sb.from('bookings').update({ admin_notes: notes }).eq('id', id);
-  if (res.error) { showError('Fehler beim Speichern: ' + res.error.message); return; }
-
-  for (var i = 0; i < allBookings.length; i++) {
-    if (allBookings[i].id === id) { allBookings[i].admin_notes = notes; break; }
-  }
-
-  var btn = document.querySelector('#notes-' + id + ' ~ .btn-save-notes');
-  if (!btn) { btn = ta.parentElement.querySelector('.btn-save-notes'); }
-  if (btn) {
-    var orig = btn.textContent;
-    btn.textContent = '✓ Gespeichert!';
-    setTimeout(function() { btn.textContent = orig; }, 1800);
-  }
-}
-
-// ── RECURRING BLOCKS ─────────────────────────────────────
-
-var DAYS_DE = ['Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag','Sonntag'];
-
-function recLabel(r) {
-  var t = (r.time_from || '').slice(0,5) + '–' + (r.time_to || '').slice(0,5);
-  var base = '';
-  if (r.type === 'weekday')      base = 'Jeden ' + DAYS_DE[r.weekday] + ' – ganztags';
-  if (r.type === 'weekday_time') base = 'Jeden ' + DAYS_DE[r.weekday] + ' ' + t + ' Uhr';
-  if (r.type === 'date_time')    base = formatDate(r.specific_date) + ' – ' + t + ' Uhr';
-  return r.label ? base + ' (' + esc(r.label) + ')' : base;
-}
-
-function renderRecurringList() {
-  var el = document.getElementById('recurring-list');
-  if (!el) return;
-  if (allRecurring.length === 0) {
-    el.innerHTML = '<div class="recurring-empty">Noch keine Regeln angelegt.</div>';
-    return;
-  }
-  el.innerHTML = allRecurring.map(function(r) {
-    var typeIcon = r.type === 'weekday' ? '🔒' : '⏰';
-    return '<div class="recurring-item">'
-      + '<span class="recurring-item-icon">' + typeIcon + '</span>'
-      + '<span class="recurring-item-label">' + recLabel(r) + '</span>'
-      + '<button class="rec-delete-btn" onclick="deleteRecurring(\'' + r.id + '\')">✕</button>'
-    + '</div>';
-  }).join('');
-}
-
-function onRecTypeChange() {
-  var type = document.getElementById('rec-type').value;
-  var wdWrap = document.getElementById('rec-weekday-wrap');
-  var dtWrap = document.getElementById('rec-date-wrap');
-  var tWrap  = document.getElementById('rec-time-wrap');
-  if (wdWrap) wdWrap.style.display = (type === 'date_time') ? 'none' : 'flex';
-  if (dtWrap) dtWrap.style.display = (type === 'date_time') ? 'flex' : 'none';
-  if (tWrap)  tWrap.style.display  = (type === 'weekday')   ? 'none' : 'flex';
-}
-
-async function addRecurring() {
-  if (!_sb) return;
-  var type    = document.getElementById('rec-type').value;
-  var weekday = parseInt(document.getElementById('rec-weekday').value, 10);
-  var date    = document.getElementById('rec-date') ? document.getElementById('rec-date').value : '';
-  var from    = document.getElementById('rec-time-from') ? document.getElementById('rec-time-from').value : '';
-  var to      = document.getElementById('rec-time-to')   ? document.getElementById('rec-time-to').value   : '';
-  var label   = document.getElementById('rec-label')     ? document.getElementById('rec-label').value.trim() : '';
-
-  if (type !== 'date_time' && isNaN(weekday)) { showError('Wochentag fehlt.'); return; }
-  if (type === 'date_time' && !date)           { showError('Datum fehlt.'); return; }
-  if (type !== 'weekday'  && (!from || !to))   { showError('Von- und Bis-Uhrzeit fehlen.'); return; }
-
-  var payload = { type: type, label: label || null };
-  if (type !== 'date_time') payload.weekday = weekday;
-  if (type === 'date_time') payload.specific_date = date;
-  if (type !== 'weekday')   { payload.time_from = from; payload.time_to = to; }
-
-  var r = await _sb.from('recurring_blocks').insert([payload]);
-  if (r.error) { showError('Fehler: ' + r.error.message); return; }
-
-  showInfo('Regel gespeichert.');
-  if (document.getElementById('rec-label'))     document.getElementById('rec-label').value = '';
-  if (document.getElementById('rec-date'))      document.getElementById('rec-date').value  = '';
-  if (document.getElementById('rec-time-from')) document.getElementById('rec-time-from').value = '';
-  if (document.getElementById('rec-time-to'))   document.getElementById('rec-time-to').value   = '';
-
-  var rRes = await _sb.from('recurring_blocks').select('*').order('created_at', { ascending: false });
-  if (!rRes.error) allRecurring = rRes.data || [];
-  renderRecurringList();
-  try { renderCalendar(); } catch(e) {}
-  setTimeout(function() { showInfo(''); }, 2000);
-}
-
-async function deleteRecurring(id) {
-  if (!_sb) return;
-  var r = await _sb.from('recurring_blocks').delete().eq('id', id);
-  if (r.error) { showError('Fehler beim Löschen: ' + r.error.message); return; }
-  allRecurring = allRecurring.filter(function(x) { return x.id !== id; });
-  renderRecurringList();
-  try { renderCalendar(); } catch(e) {}
 }
 
 // ── BOOKING LIST TABLE ────────────────────────────────────

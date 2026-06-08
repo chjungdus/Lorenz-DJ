@@ -1428,14 +1428,19 @@ section { padding: 96px 0; }
   transform: rotate(-5deg);
 }
 .hero-eagle svg { width: 100%; height: auto; display: block; }
+.hero-eagle img {
+  width: 100%; height: auto; display: block;
+  filter: brightness(0) invert(1) sepia(1) saturate(8) hue-rotate(248deg) brightness(2.2);
+}
 
 /* Footer-Adler */
 .footer-eagle-svg {
   width: 150px;
   height: auto;
-  opacity: 0.45;
+  opacity: 0.7;
   display: block;
   margin-bottom: 14px;
+  filter: brightness(0) invert(1) sepia(1) saturate(8) hue-rotate(248deg) brightness(2);
 }
 
 /* Equipment-Foto */
