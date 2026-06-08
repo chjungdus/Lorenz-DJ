@@ -1413,7 +1413,10 @@ section { padding: 96px 0; }
    ============================================================ */
 
 /* Nav-Adler */
-.nav-eagle { width: 36px; height: auto; flex-shrink: 0; }
+.nav-eagle {
+  width: 36px; height: auto; flex-shrink: 0;
+  filter: brightness(0) invert(1) sepia(1) saturate(8) hue-rotate(248deg) brightness(2.2);
+}
 
 /* Hero-Adler – großes dekoratives Hintergrundelement */
 .hero-eagle {
