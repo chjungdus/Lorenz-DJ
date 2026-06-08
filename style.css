@@ -1415,7 +1415,7 @@ section { padding: 96px 0; }
 /* Nav-Adler */
 .nav-eagle {
   width: 36px; height: auto; flex-shrink: 0;
-  filter: brightness(0) invert(1) sepia(1) saturate(8) hue-rotate(248deg) brightness(2.2);
+  filter: invert(1) sepia(1) saturate(8) hue-rotate(248deg) brightness(2.5);
 }
 
 /* Hero-Adler – großes dekoratives Hintergrundelement */
@@ -1433,7 +1433,7 @@ section { padding: 96px 0; }
 .hero-eagle svg { width: 100%; height: auto; display: block; }
 .hero-eagle img {
   width: 100%; height: auto; display: block;
-  filter: brightness(0) invert(1) sepia(1) saturate(8) hue-rotate(248deg) brightness(2.2);
+  filter: invert(1) sepia(1) saturate(8) hue-rotate(248deg) brightness(2.5);
 }
 
 /* Footer-Adler */
@@ -1443,7 +1443,7 @@ section { padding: 96px 0; }
   opacity: 0.7;
   display: block;
   margin-bottom: 14px;
-  filter: brightness(0) invert(1) sepia(1) saturate(8) hue-rotate(248deg) brightness(2);
+  filter: invert(1) sepia(1) saturate(8) hue-rotate(248deg) brightness(2.5);
 }
 
 /* Equipment-Foto */
